@@ -1,0 +1,20 @@
+package(default_visibility = ["//visibility:public"])
+
+# "fastverk" wordmark + mark/wordmark lockups, in Space Grotesk.
+# on-dark (cream) + on-light (ink); SVG (self-contained outlines) + PNG.
+genrule(
+    name = "wordmark_set",
+    srcs = ["//fonts:SpaceGrotesk-SemiBold.ttf"],
+    outs = [
+        "wordmark_dark.svg",
+        "wordmark_dark.png",
+        "wordmark_light.svg",
+        "wordmark_light.png",
+        "lockup_dark.svg",
+        "lockup_dark.png",
+        "lockup_light.svg",
+        "lockup_light.png",
+    ],
+    cmd = "$(execpath //gen:wordmark) $(RULEDIR) $(execpath //fonts:SpaceGrotesk-SemiBold.ttf)",
+    tools = ["//gen:wordmark"],
+)

@@ -1,34 +1,12 @@
-\documentclass[11pt]{article}
-\usepackage[a4paper,margin=22mm]{geometry}
-\usepackage{amsmath}
-\usepackage{graphicx}
-\usepackage[dvipsnames]{xcolor}
-\usepackage{tikz}
-\usepackage{enumitem}
-\usepackage{array}
-\usepackage{parskip}
-\pagestyle{empty}
-\graphicspath{{../icons/}}
-
-% ── brand colors (working default: "midnight"; palette is provisional) ──
-\definecolor{bg}{HTML}{15161A}
-\definecolor{fg}{HTML}{ECE7DA}
-\definecolor{accent}{HTML}{E0A33E}
-\definecolor{tertiary}{HTML}{4A565A}
-
-\newcommand{\swatch}[2]{%
-  \begin{tikzpicture}[baseline]
-    \fill[#1] (0,0) rectangle (1.1,1.1);
-    \draw[black!30] (0,0) rectangle (1.1,1.1);
-  \end{tikzpicture}\hspace{2pt}\texttt{\footnotesize #2}}
+\documentclass{fastverk}
+\graphicspath{{../icons/}{../wordmark/}}
 
 \begin{document}
 
 % ── cover ───────────────────────────────────────────────────────────
 \begin{center}
-  \vspace*{12mm}
-  \includegraphics[width=46mm]{fastverk_full_1024.png}\\[6mm]
-  {\Huge\bfseries fastverk}\\[2mm]
+  \vspace*{18mm}
+  \includegraphics[width=128mm]{lockup_light.png}\\[10mm]
   {\large Brand Guidelines}\\[1mm]
   {\footnotesize Generated from one parametric source — \texttt{//gen:gen\_mark}}
 \end{center}
@@ -69,11 +47,11 @@ Both members share the construction; the accent and field colors invert.
 \end{center}
 
 % ── color ────────────────────────────────────────────────────────────
-\section*{Color \textnormal{\small(provisional — geometry is locked, palette is a parameter)}}
-\swatch{bg}{15161A}\quad
-\swatch{fg}{ECE7DA}\quad
-\swatch{accent}{E0A33E}\quad
-\swatch{tertiary}{4A565A}
+\section*{Color}
+\fvswatch{fvbg}{15161A}\quad
+\fvswatch{fvfg}{ECE7DA}\quad
+\fvswatch{fvaccent}{E0A33E}\quad
+\fvswatch{fvtertiary}{4A565A}
 
 \medskip
 \noindent\textbf{bg} background \quad \textbf{fg} mark \quad

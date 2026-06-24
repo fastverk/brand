@@ -1,10 +1,11 @@
-load("@rules_tectonic//tectonic:defs.bzl", "tectonic_pdf")
+load("//doc:defs.bzl", "brand_doc")
 
 package(default_visibility = ["//visibility:public"])
 
-# The brand guidelines PDF. Figures are the hermetically-rasterized icons
-# (staged by the rule at their workspace-relative paths -> ../icons/*.png).
-tectonic_pdf(
+# The brand guidelines PDF. The fastverk class + fonts are auto-bundled by
+# brand_doc; only the figures need listing. Figures resolve at their
+# workspace-relative paths (icons/, wordmark/).
+brand_doc(
     name = "brandbook",
     srcs = [
         "//icons:fastverk_full_1024.png",
@@ -13,6 +14,7 @@ tectonic_pdf(
         "//icons:fastverk_lower_16.png",
         "//icons:fastverk_lower_32.png",
         "//icons:fastverk_lower_64.png",
+        "//wordmark:lockup_light.png",
     ],
     main = "main.tex",
 )

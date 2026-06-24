@@ -1,0 +1,19 @@
+load(":defs.bzl", "brand_resources")
+
+package(default_visibility = ["//visibility:public"])
+
+# The resource bundle every fastverk tectonic doc gets: the class + brand fonts.
+# Depend on this (or just use brand_doc, which defaults to it).
+brand_resources(
+    name = "resources",
+    srcs = [
+        "fastverk.cls",
+        "//fonts:SpaceGrotesk-Medium.ttf",
+        "//fonts:SpaceGrotesk-SemiBold.ttf",
+    ],
+)
+
+exports_files([
+    "fastverk.cls",
+    "defs.bzl",
+])

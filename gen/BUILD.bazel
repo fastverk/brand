@@ -35,6 +35,22 @@ py_binary(
     ],
 )
 
+# Wordmark + lockups ("fastverk" in Space Grotesk; vector via fontTools, raster via Pillow).
+py_binary(
+    name = "wordmark",
+    srcs = [
+        "raster.py",
+        "wordmark.py",
+    ],
+    imports = ["."],
+    main = "wordmark.py",
+    deps = [
+        ":gen_mark_lib",
+        requirement("fonttools"),
+        requirement("pillow"),
+    ],
+)
+
 # Canonical layered SVGs — every VARIANT x LAYER (keep in sync with gen_mark.py).
 _VARIANTS = [
     "full",
