@@ -1,0 +1,41 @@
+package(default_visibility = ["//visibility:public"])
+
+# Per-platform icon set, rasterized hermetically from the canonical mark.
+# Keep VARIANTS/sizes in sync with gen/raster.py.
+_VARIANTS = [
+    "full",
+    "lower",
+]
+
+_PNG_SIZES = [
+    16,
+    32,
+    48,
+    64,
+    128,
+    256,
+    512,
+    1024,
+]
+
+_PNGS = [
+    "fastverk_%s_%d.png" % (v, s)
+    for v in _VARIANTS
+    for s in _PNG_SIZES
+]
+
+_PACKED = [
+    "fastverk_%s.%s" % (v, ext)
+    for v in _VARIANTS
+    for ext in [
+        "icns",
+        "ico",
+    ]
+]
+
+genrule(
+    name = "icon_set",
+    outs = _PNGS + _PACKED,
+    cmd = "$(execpath //gen:raster) $(RULEDIR)",
+    tools = ["//gen:raster"],
+)

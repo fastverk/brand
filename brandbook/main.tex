@@ -1,0 +1,112 @@
+\documentclass[11pt]{article}
+\usepackage[a4paper,margin=22mm]{geometry}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{tikz}
+\usepackage{enumitem}
+\usepackage{array}
+\usepackage{parskip}
+\pagestyle{empty}
+\graphicspath{{../icons/}}
+
+% ── brand colors (working default: "midnight"; palette is provisional) ──
+\definecolor{bg}{HTML}{15161A}
+\definecolor{fg}{HTML}{ECE7DA}
+\definecolor{accent}{HTML}{E0A33E}
+\definecolor{tertiary}{HTML}{4A565A}
+
+\newcommand{\swatch}[2]{%
+  \begin{tikzpicture}[baseline]
+    \fill[#1] (0,0) rectangle (1.1,1.1);
+    \draw[black!30] (0,0) rectangle (1.1,1.1);
+  \end{tikzpicture}\hspace{2pt}\texttt{\footnotesize #2}}
+
+\begin{document}
+
+% ── cover ───────────────────────────────────────────────────────────
+\begin{center}
+  \vspace*{12mm}
+  \includegraphics[width=46mm]{fastverk_full_1024.png}\\[6mm]
+  {\Huge\bfseries fastverk}\\[2mm]
+  {\large Brand Guidelines}\\[1mm]
+  {\footnotesize Generated from one parametric source — \texttt{//gen:gen\_mark}}
+\end{center}
+\vspace{8mm}
+
+% ── the mark ─────────────────────────────────────────────────────────
+\section*{The mark}
+The mark plays off \textbf{F}, \textbf{V}, the down-triangle \(\forall\)
+(universal quantifier) and the horizontal arms \(\exists\)/\textsf{E} —
+fitting, since Lean and its quantifiers do a lot of the work. It is a
+deliberate construction on the unit circle and the golden ratio
+(\(\varphi = 0.618\)), not a hand-traced drawing.
+
+\begin{enumerate}[leftmargin=*,itemsep=1pt]
+  \item Equilateral triangle on the unit circle, apex down \(\to T_{\mathrm{out}}\).
+  \item Copy scaled to circumradius \(\varphi \to T_{\mathrm{in}}\); \(\mathrm{RING}=T_{\mathrm{out}}-T_{\mathrm{in}}\).
+  \item Band thickness \(T=\tfrac12(1-\varphi)\) is the one gap/stroke unit.
+  \item \textbf{Top-right cut} — the right-leg segment whose height equals its
+        own base (\(2T/\sqrt3\)): a 60\(^\circ\) parallelogram on the triangle's
+        inner \& outer "/". The flush line \(L\) derives from it.
+  \item \textbf{Crossbar} — the F arm / \(\forall\) bar / \(\exists\) stroke, "/"-beveled.
+  \item \textbf{Arrow cut} — a \(\perp\) cut through a chosen "\textbackslash" midpoint.
+  \item \textbf{Accent + tertiary} fills complete the figure.
+\end{enumerate}
+
+% ── the family ───────────────────────────────────────────────────────
+\section*{The family}
+Both members share the construction; the accent and field colors invert.
+
+\begin{center}
+\begin{tabular}{>{\centering\arraybackslash}m{42mm} >{\centering\arraybackslash}m{42mm}}
+  \includegraphics[width=38mm]{fastverk_full_1024.png} &
+  \includegraphics[width=38mm]{fastverk_lower_1024.png} \\[2mm]
+  \textbf{full} & \textbf{lower} \\
+  {\footnotesize accent field + muted cut} & {\footnotesize muted field + accent arrow} \\
+  {\footnotesize heraldic; large sizes} & {\footnotesize mark-like; small sizes} \\
+\end{tabular}
+\end{center}
+
+% ── color ────────────────────────────────────────────────────────────
+\section*{Color \textnormal{\small(provisional — geometry is locked, palette is a parameter)}}
+\swatch{bg}{15161A}\quad
+\swatch{fg}{ECE7DA}\quad
+\swatch{accent}{E0A33E}\quad
+\swatch{tertiary}{4A565A}
+
+\medskip
+\noindent\textbf{bg} background \quad \textbf{fg} mark \quad
+\textbf{accent} arrow/field \quad \textbf{tertiary} muted cut/field.
+The tertiary is deliberately desaturated so it recedes behind the accent.
+
+% ── clear space & minimum size ───────────────────────────────────────
+\section*{Clear space \& minimum size}
+The rounded-rect background \emph{is} the clear space (corner radius
+\(0.20\times\) the icon side). Both variants hold the silhouette down to
+32\,px; below that, prefer \textbf{lower} (the arrow gives a clearer focal point).
+
+\begin{center}
+\begin{tabular}{cccc}
+  \includegraphics[width=8mm]{fastverk_lower_16.png} &
+  \includegraphics[width=12mm]{fastverk_lower_32.png} &
+  \includegraphics[width=18mm]{fastverk_lower_64.png} &
+  \includegraphics[width=26mm]{fastverk_lower_128.png} \\
+  16 & 32 & 64 & 128 \\
+\end{tabular}
+\end{center}
+
+% ── platform assets ──────────────────────────────────────────────────
+\section*{Platform assets}
+All built hermetically from the mark (\texttt{bazel build //icons:icon\_set}):
+
+\begin{center}
+\begin{tabular}{ll}
+  \textbf{macOS} & \texttt{fastverk\_\{full,lower\}.icns} (16--1024, @2x) \\
+  \textbf{Windows} & \texttt{fastverk\_\{full,lower\}.ico} (16--256) \\
+  \textbf{Web / favicon} & \texttt{fastverk\_lower.ico}, \texttt{*.png} 16--1024 \\
+  \textbf{Icon Composer} & layered SVG: \texttt{.bg/.tint/.arrow/.mark.svg} \\
+\end{tabular}
+\end{center}
+
+\end{document}

@@ -1,0 +1,57 @@
+load("@brand_pip//:requirements.bzl", "requirement")
+load("@rules_python//python:defs.bzl", "py_binary", "py_library")
+
+package(default_visibility = ["//visibility:public"])
+
+# The canonical mark construction (shapely CSG -> svgwrite layers).
+py_library(
+    name = "gen_mark_lib",
+    srcs = ["gen_mark.py"],
+    imports = ["."],
+    deps = [
+        requirement("shapely"),
+        requirement("svgwrite"),
+    ],
+)
+
+py_binary(
+    name = "gen_mark",
+    srcs = ["gen_mark.py"],
+    imports = ["."],
+    deps = [
+        requirement("shapely"),
+        requirement("svgwrite"),
+    ],
+)
+
+# Hermetic rasterizer (Pillow draws the layer polygons; writes PNG/.icns/.ico).
+py_binary(
+    name = "raster",
+    srcs = ["raster.py"],
+    imports = ["."],
+    deps = [
+        ":gen_mark_lib",
+        requirement("pillow"),
+    ],
+)
+
+# Canonical layered SVGs — every VARIANT x LAYER (keep in sync with gen_mark.py).
+_VARIANTS = [
+    "full",
+    "lower",
+]
+
+_LAYERS = [
+    "svg",
+    "bg.svg",
+    "mark.svg",
+    "arrow.svg",
+    "tint.svg",
+]
+
+genrule(
+    name = "svgs",
+    outs = ["fastverk_%s.%s" % (v, l) for v in _VARIANTS for l in _LAYERS],
+    cmd = "$(execpath :gen_mark) $(RULEDIR)",
+    tools = [":gen_mark"],
+)

@@ -1,0 +1,25 @@
+package(default_visibility = ["//visibility:public"])
+
+exports_files(["requirements.txt"])
+
+# Canonical layered SVGs (both variants).
+filegroup(
+    name = "svgs",
+    srcs = ["//gen:svgs"],
+)
+
+# Per-platform raster icon set (PNG/.icns/.ico, both variants).
+filegroup(
+    name = "icons",
+    srcs = ["//icons:icon_set"],
+)
+
+# Everything: vectors + icons + brandbook PDF.
+filegroup(
+    name = "all",
+    srcs = [
+        ":icons",
+        ":svgs",
+        "//brandbook",
+    ],
+)
