@@ -77,6 +77,21 @@ py_binary(
     ],
 )
 
+# Office templates (python-pptx / python-docx; also import into Google Slides/Docs).
+py_binary(
+    name = "pptx_gen",
+    srcs = ["pptx_gen.py"],
+    imports = ["."],
+    deps = [requirement("python-pptx")],
+)
+
+py_binary(
+    name = "docx_gen",
+    srcs = ["docx_gen.py"],
+    imports = ["."],
+    deps = [requirement("python-docx")],
+)
+
 # Canonical layered SVGs — every VARIANT x LAYER (keep in sync with gen_mark.py).
 _VARIANTS = [
     "full",
