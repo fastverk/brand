@@ -7,6 +7,7 @@ package(default_visibility = ["//visibility:public"])
 brand_resources(
     name = "resources",
     srcs = [
+        "beamerthemefastverk.sty",
         "fastverk.cls",
         "//fonts:SpaceGrotesk-Medium.ttf",
         "//fonts:SpaceGrotesk-SemiBold.ttf",
@@ -15,5 +16,6 @@ brand_resources(
 
 exports_files([
     "fastverk.cls",
+    "beamerthemefastverk.sty",
     "defs.bzl",
 ])

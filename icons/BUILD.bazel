@@ -24,6 +24,12 @@ _PNGS = [
     for s in _PNG_SIZES
 ]
 
+_LIGHT_PNGS = [
+    "fastverk_light_%s_%d.png" % (v, s)
+    for v in _VARIANTS
+    for s in _PNG_SIZES
+]
+
 _PACKED = [
     "fastverk_%s.%s" % (v, ext)
     for v in _VARIANTS
@@ -35,7 +41,7 @@ _PACKED = [
 
 genrule(
     name = "icon_set",
-    outs = _PNGS + _PACKED,
+    outs = _PNGS + _LIGHT_PNGS + _PACKED,
     cmd = "$(execpath //gen:raster) $(RULEDIR)",
     tools = ["//gen:raster"],
 )

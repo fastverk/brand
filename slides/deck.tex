@@ -1,0 +1,68 @@
+\documentclass[aspectratio=169]{beamer}
+\usetheme{fastverk}
+\graphicspath{{../wordmark/}{../icons/}}
+
+\begin{document}
+
+% ── title ────────────────────────────────────────────────────────────
+\begin{frame}[plain]
+  \centering
+  \vfill
+  \includegraphics[width=0.62\linewidth]{wordmark_dark.png}\\[1.4em]
+  {\color{fvslate}\large Brand deck}\\[0.4em]
+  {\color{fvslate}\footnotesize generated from one parametric source — \texttt{//brand}}
+  \vfill
+\end{frame}
+
+% ── the mark ─────────────────────────────────────────────────────────
+\begin{frame}{The mark}
+  \begin{columns}[c]
+    \begin{column}{0.58\textwidth}
+      \begin{itemize}
+        \item Plays off \textbf{F}, \textbf{V}, the down-triangle $\forall$ and the arms $\exists$
+        \item A golden-ratio construction on the unit circle ($\varphi=0.618$)
+        \item One source $\to$ SVG, icons, brandbook, this deck
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.36\textwidth}
+      \centering\includegraphics[width=\linewidth]{fastverk_full_512.png}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ── light & dark ─────────────────────────────────────────────────────
+\begin{frame}{Light \& dark}
+  The mark adapts across modes — dark carries a mono-amber gradient, light an amber-slate one.
+  \vfill
+  \begin{columns}[c]
+    \begin{column}{0.5\textwidth}\centering
+      \includegraphics[width=0.62\linewidth]{fastverk_full_512.png}\\[0.4em]{\color{fvslate}\small dark}
+    \end{column}
+    \begin{column}{0.5\textwidth}\centering
+      \includegraphics[width=0.62\linewidth]{fastverk_light_full_512.png}\\[0.4em]{\color{fvslate}\small light}
+    \end{column}
+  \end{columns}
+  \vfill
+\end{frame}
+
+% ── color ────────────────────────────────────────────────────────────
+\begin{frame}{Color}
+  \begin{tikzpicture}
+    \foreach \c/\n [count=\i] in {fvbg/15161A, fvfg/ECE7DA, fvaccent/E0A33E, fvslate/4A565A} {
+      \fill[\c] (\i*2.6,0) rectangle ++(2.2,1.6);
+      \node[anchor=north west, text=fvfg, font=\scriptsize\ttfamily] at (\i*2.6,-0.1) {\n};
+    }
+  \end{tikzpicture}
+  \vfill
+  \textbf{bg} midnight \quad \textbf{fg} cream \quad \textbf{accent} amber \quad \textbf{tertiary} slate.
+\end{frame}
+
+% ── closing ──────────────────────────────────────────────────────────
+\begin{frame}[plain]
+  \centering\vfill
+  \includegraphics[width=0.26\linewidth]{fastverk_full_512.png}\\[1.2em]
+  {\Large\bfseries fastverk}
+  \vfill
+\end{frame}
+
+\end{document}

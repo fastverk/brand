@@ -32,7 +32,8 @@ class Spec:
     tertiary_fill: str = "none"  # tertiary color: none | cut (top-right gap) | interior (all inner black)
     center_y: float = -0.13      # geometry y at canvas center (optical center; bbox center = -0.25)
     canvas: int = 1254
-    bg: str = "#15161A"; fg: str = "#ECE7DA"; accent: str = "#E0A33E"; tertiary: str = "#4A565A"
+    bg: str = "#15161A"; fg: str = "#ECE7DA"; accent: str = "#F2C46A"; tertiary: str = "#4A565A"
+    accent2: str = "#C9852B"     # second arrow gradient stop (bottom); "" = solid accent
     bg_round: float = 0.20
 
 class Mark:
@@ -135,7 +136,14 @@ class Mark:
             d.add(d.path(d=self._d(tr), fill=self.s.tertiary)).update({"fill-rule": "evenodd"})
         ar = self.arrow()
         if ar is not None:
-            d.add(d.path(d=self._d(ar), fill=self.s.accent)).update({"fill-rule": "evenodd"})
+            fill = self.s.accent
+            if self.s.accent2:  # vertical linear gradient over the arrow (accent -> accent2)
+                g = d.linearGradient(start=(0, 0), end=(0, 1), id="arrowgrad")
+                g.add_stop_color(0, self.s.accent)
+                g.add_stop_color(1, self.s.accent2)
+                d.defs.add(g)
+                fill = "url(#arrowgrad)"
+            d.add(d.path(d=self._d(ar), fill=fill)).update({"fill-rule": "evenodd"})
         d.add(d.path(d=self._d(self.mark()), fill=self.s.fg)).update({"fill-rule": "evenodd"})
         d.save()
 
@@ -159,6 +167,12 @@ class Mark:
 VARIANTS = {
     "full":  Spec(cut_anchor="mid_full",  arrow_region="full_inner",  tertiary_fill="cut"),
     "lower": Spec(cut_anchor="mid_lower", arrow_region="lower_inner", tertiary_fill="interior"),
+}
+
+# Color modes (palette + arrow gradient). dark = mono-amber, light = amber-slate.
+MODES = {
+    "dark":  {},  # the Spec defaults: mono-amber gradient on midnight
+    "light": {"bg": "#ECE7DA", "fg": "#15161A", "accent": "#E0A33E", "accent2": "#4A565A"},
 }
 
 # Every layer file emit() can produce, per variant (for Bazel `outs` declaration).
