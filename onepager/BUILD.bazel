@@ -1,0 +1,11 @@
+load("//doc:defs.bzl", "brand_doc")
+
+package(default_visibility = ["//visibility:public"])
+
+# A single-page brand summary in the fastverk-onepager class
+# (\documentclass{fastverk-onepager}). Class + fonts auto-bundled by brand_doc.
+brand_doc(
+    name = "onepager",
+    srcs = ["//icons:fastverk_full_512.png"],
+    main = "onepager.tex",
+)

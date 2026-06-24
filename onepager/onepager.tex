@@ -1,0 +1,39 @@
+\documentclass{fastverk-onepager}
+\graphicspath{{../icons/}}
+
+\begin{document}
+\fvheader{fastverk}{brand at a glance}
+
+\noindent
+\begin{minipage}[t]{0.62\linewidth}
+  \section*{The mark}
+  Plays off \textbf{F}, \textbf{V}, the down-triangle $\forall$ and the horizontal
+  arms $\exists$ — a deliberate golden-ratio construction on the unit circle
+  ($\varphi = 0.618$), not a hand-traced drawing. One parametric source produces
+  every asset: SVG, per-platform icons, the brandbook, slide decks, and office
+  templates.
+
+  \section*{Family}
+  \textbf{full} — accent field + muted cut, for large sizes. \quad
+  \textbf{lower} — accent arrow on a muted field, for small sizes.
+\end{minipage}\hfill
+\begin{minipage}[t]{0.34\linewidth}
+  \vspace{-2mm}
+  \centering\includegraphics[width=0.8\linewidth]{fastverk_full_512.png}
+\end{minipage}
+
+\section*{Color}
+\fvswatch{fvbg}{15161A}\quad
+\fvswatch{fvfg}{ECE7DA}\quad
+\fvswatch{fvaccent}{E0A33E}\quad
+\fvswatch{fvtertiary}{4A565A}
+
+\medskip
+\noindent The arrow carries a gradient — \textbf{mono-amber} in dark mode,
+\textbf{amber-slate} in light mode.
+
+\section*{Build}
+\texttt{bazel build //...} regenerates everything hermetically from
+\texttt{//gen:gen\_mark}.
+
+\end{document}

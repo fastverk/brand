@@ -9,6 +9,7 @@ brand_resources(
     srcs = [
         "beamerthemefastverk.sty",
         "fastverk.cls",
+        "fastverk-onepager.cls",
         "//fonts:SpaceGrotesk-Medium.ttf",
         "//fonts:SpaceGrotesk-SemiBold.ttf",
     ],
@@ -16,6 +17,7 @@ brand_resources(
 
 exports_files([
     "fastverk.cls",
+    "fastverk-onepager.cls",
     "beamerthemefastverk.sty",
     "defs.bzl",
 ])
