@@ -30,6 +30,7 @@ class Spec:
     arrow_region: str = "lower_inner"  # accent fill: none | lower_inner | full_inner
     arrow_with_cut: bool = True  # union the cut into the accent arrow shape
     tertiary_fill: str = "none"  # tertiary color: none | cut (top-right gap) | interior (all inner black)
+    center_y: float = -0.13      # geometry y at canvas center (optical center; bbox center = -0.25)
     canvas: int = 1254
     bg: str = "#15161A"; fg: str = "#ECE7DA"; accent: str = "#E0A33E"; tertiary: str = "#4A565A"
     bg_round: float = 0.20
@@ -112,7 +113,7 @@ class Mark:
 
     # ---- transform + emit ----
     def _tf(self):
-        S = self.s.canvas; scale = 0.66*S / (R3); cy = -0.25
+        S = self.s.canvas; scale = 0.66*S / (R3); cy = self.s.center_y
         return lambda x, y: (S/2 + x*scale, S/2 - (y - cy)*scale)
     def _d(self, g):
         tf = self._tf()

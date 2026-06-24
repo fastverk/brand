@@ -1,5 +1,5 @@
 \documentclass{fastverk}
-\graphicspath{{../icons/}{../wordmark/}}
+\graphicspath{{../icons/}{../wordmark/}{../diagrams/}}
 
 \begin{document}
 
@@ -10,7 +10,7 @@
   {\large Brand Guidelines}\\[1mm]
   {\footnotesize Generated from one parametric source — \texttt{//gen:gen\_mark}}
 \end{center}
-\vspace{8mm}
+\vspace{6mm}
 
 % ── the mark ─────────────────────────────────────────────────────────
 \section*{The mark}
@@ -20,31 +20,63 @@ fitting, since Lean and its quantifiers do a lot of the work. It is a
 deliberate construction on the unit circle and the golden ratio
 (\(\varphi = 0.618\)), not a hand-traced drawing.
 
+\begin{minipage}[c]{0.56\textwidth}
 \begin{enumerate}[leftmargin=*,itemsep=1pt]
   \item Equilateral triangle on the unit circle, apex down \(\to T_{\mathrm{out}}\).
   \item Copy scaled to circumradius \(\varphi \to T_{\mathrm{in}}\); \(\mathrm{RING}=T_{\mathrm{out}}-T_{\mathrm{in}}\).
   \item Band thickness \(T=\tfrac12(1-\varphi)\) is the one gap/stroke unit.
   \item \textbf{Top-right cut} — the right-leg segment whose height equals its
-        own base (\(2T/\sqrt3\)): a 60\(^\circ\) parallelogram on the triangle's
-        inner \& outer "/". The flush line \(L\) derives from it.
+        own base (\(2T/\sqrt3\)): a 60\(^\circ\) parallelogram.
   \item \textbf{Crossbar} — the F arm / \(\forall\) bar / \(\exists\) stroke, "/"-beveled.
   \item \textbf{Arrow cut} — a \(\perp\) cut through a chosen "\textbackslash" midpoint.
   \item \textbf{Accent + tertiary} fills complete the figure.
 \end{enumerate}
+\end{minipage}\hfill
+\begin{minipage}[c]{0.40\textwidth}
+  \centering
+  \includegraphics[width=58mm]{construction.png}\\[1mm]
+  {\footnotesize unit circle · \(T_{\mathrm{out}}\) (black) · \(T_{\mathrm{in}}=\varphi\,T_{\mathrm{out}}\) (amber)}
+\end{minipage}
 
 % ── the family ───────────────────────────────────────────────────────
 \section*{The family}
 Both members share the construction; the accent and field colors invert.
 
 \begin{center}
-\begin{tabular}{>{\centering\arraybackslash}m{42mm} >{\centering\arraybackslash}m{42mm}}
-  \includegraphics[width=38mm]{fastverk_full_1024.png} &
-  \includegraphics[width=38mm]{fastverk_lower_1024.png} \\[2mm]
+\begin{tabular}{>{\centering\arraybackslash}m{46mm} >{\centering\arraybackslash}m{46mm}}
+  \includegraphics[width=42mm]{fastverk_full_1024.png} &
+  \includegraphics[width=42mm]{fastverk_lower_1024.png} \\[2mm]
   \textbf{full} & \textbf{lower} \\
   {\footnotesize accent field + muted cut} & {\footnotesize muted field + accent arrow} \\
   {\footnotesize heraldic; large sizes} & {\footnotesize mark-like; small sizes} \\
 \end{tabular}
 \end{center}
+
+\clearpage
+
+% ── grid & optical center ────────────────────────────────────────────
+\section*{Grid \& optical center}
+A downward triangle is top-heavy: its mass (centroid) sits above its bounding-box
+center. The mark is therefore placed on its \emph{optical} center
+(\(c_y=-0.13\), vs. the bounding-box center \(-0.25\)) so it reads as centered.
+
+\begin{center}
+  \includegraphics[width=62mm]{grid.png}\\[1mm]
+  {\footnotesize amber crosshair = the optical center the mark is balanced on}
+\end{center}
+
+% ── clear space ──────────────────────────────────────────────────────
+\section*{Clear space}
+Keep clear space around the icon of at least the corner radius
+(\(0.20\times\) the icon side, the amber unit below). The rounded-rect background
+\emph{is} the icon; never crop or overlap it inside this margin.
+
+\begin{center}
+  \includegraphics[width=62mm]{clearspace.png}\\[1mm]
+  {\footnotesize dashed = minimum clear space · amber square = the clearance unit}
+\end{center}
+
+\clearpage
 
 % ── color ────────────────────────────────────────────────────────────
 \section*{Color}
@@ -58,11 +90,10 @@ Both members share the construction; the accent and field colors invert.
 \textbf{accent} arrow/field \quad \textbf{tertiary} muted cut/field.
 The tertiary is deliberately desaturated so it recedes behind the accent.
 
-% ── clear space & minimum size ───────────────────────────────────────
-\section*{Clear space \& minimum size}
-The rounded-rect background \emph{is} the clear space (corner radius
-\(0.20\times\) the icon side). Both variants hold the silhouette down to
-32\,px; below that, prefer \textbf{lower} (the arrow gives a clearer focal point).
+% ── app icon & minimum size ──────────────────────────────────────────
+\section*{App icon \& minimum size}
+Both variants hold the silhouette down to 32\,px; below that, prefer
+\textbf{lower} (the arrow gives a clearer focal point).
 
 \begin{center}
 \begin{tabular}{cccc}
@@ -74,16 +105,20 @@ The rounded-rect background \emph{is} the clear space (corner radius
 \end{tabular}
 \end{center}
 
+\medskip
+\noindent The icon is authored as layered SVG (\texttt{.bg / .tint / .arrow /
+.mark}) for \textbf{Icon Composer} / Liquid Glass — see \texttt{//iconcomposer}.
+
 % ── platform assets ──────────────────────────────────────────────────
 \section*{Platform assets}
-All built hermetically from the mark (\texttt{bazel build //icons:icon\_set}):
+All built hermetically from the mark (\texttt{bazel build //...}):
 
 \begin{center}
 \begin{tabular}{ll}
   \textbf{macOS} & \texttt{fastverk\_\{full,lower\}.icns} (16--1024, @2x) \\
   \textbf{Windows} & \texttt{fastverk\_\{full,lower\}.ico} (16--256) \\
   \textbf{Web / favicon} & \texttt{fastverk\_lower.ico}, \texttt{*.png} 16--1024 \\
-  \textbf{Icon Composer} & layered SVG: \texttt{.bg/.tint/.arrow/.mark.svg} \\
+  \textbf{Liquid Glass} & \texttt{fastverk\_\{full,lower\}.icon} (Icon Composer) \\
 \end{tabular}
 \end{center}
 

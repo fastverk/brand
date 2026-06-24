@@ -8,6 +8,9 @@ package(default_visibility = ["//visibility:public"])
 brand_doc(
     name = "brandbook",
     srcs = [
+        "//diagrams:clearspace.png",
+        "//diagrams:construction.png",
+        "//diagrams:grid.png",
         "//icons:fastverk_full_1024.png",
         "//icons:fastverk_lower_1024.png",
         "//icons:fastverk_lower_128.png",

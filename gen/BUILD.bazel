@@ -51,6 +51,32 @@ py_binary(
     ],
 )
 
+# Icon Composer .icon bundles (Liquid Glass; manifest + layer assets).
+py_binary(
+    name = "iconcomposer",
+    srcs = ["iconcomposer.py"],
+    imports = ["."],
+    deps = [
+        ":gen_mark_lib",
+        requirement("svgwrite"),
+    ],
+)
+
+# Brandbook guideline diagrams (construction grid, optical center, clear space).
+py_binary(
+    name = "diagrams",
+    srcs = [
+        "diagrams.py",
+        "raster.py",
+    ],
+    imports = ["."],
+    main = "diagrams.py",
+    deps = [
+        ":gen_mark_lib",
+        requirement("pillow"),
+    ],
+)
+
 # Canonical layered SVGs — every VARIANT x LAYER (keep in sync with gen_mark.py).
 _VARIANTS = [
     "full",
@@ -67,7 +93,7 @@ _LAYERS = [
 
 genrule(
     name = "svgs",
-    outs = ["fastverk_%s.%s" % (v, l) for v in _VARIANTS for l in _LAYERS],
+    outs = ["fastverk_%s.%s" % (v, lyr) for v in _VARIANTS for lyr in _LAYERS],
     cmd = "$(execpath :gen_mark) $(RULEDIR)",
     tools = [":gen_mark"],
 )

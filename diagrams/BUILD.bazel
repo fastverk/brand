@@ -1,0 +1,13 @@
+package(default_visibility = ["//visibility:public"])
+
+# Brandbook guideline figures, rendered hermetically from the mark geometry.
+genrule(
+    name = "diagrams",
+    outs = [
+        "construction.png",
+        "grid.png",
+        "clearspace.png",
+    ],
+    cmd = "$(execpath //gen:diagrams) $(RULEDIR)",
+    tools = ["//gen:diagrams"],
+)
