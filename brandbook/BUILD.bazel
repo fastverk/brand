@@ -21,7 +21,7 @@ brand_doc(
         "//icons:fastverk_lower_32.png",
         "//icons:fastverk_lower_512.png",
         "//icons:fastverk_lower_64.png",
-        "//wordmark:lockup_light.png",
+        "//wordmark:lockup_tag_light.png",
     ],
     main = "main.tex",
 )

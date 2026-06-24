@@ -17,6 +17,7 @@ from gen_mark import Mark, VARIANTS
 from raster import raster
 
 WORD = "fastverk"
+TAGLINE = "proven systems, built fast"
 INK, CREAM = "#15161A", "#ECE7DA"
 TRACK = 0.012  # tracking, in em
 CONTEXTS = [("dark", CREAM), ("light", INK)]  # wordmark color by background
@@ -89,10 +90,36 @@ def emit_lockup(out_dir, font_path, variant="full", H=320, em=176, gap=0.30, pad
         img.save(os.path.join(out_dir, f"lockup_{tag}.png"))
     print("lockup %dx%d" % (W, H))
 
-def main(out_dir, font_path):
+def emit_lockup_tag(out_dir, sb, md, variant="full", H=320, em=168, tag_em=54, gap=0.30, pad=18):
+    spec = VARIANTS[variant]
+    wg, wu, wa, wd, ww = _layout(sb, WORD)
+    tg, tu, ta, td, tw = _layout(md, TAGLINE)
+    ws, ts = em / wu, tag_em / tu
+    g = gap * H
+    cy = H / 2
+    W = round(H + g + max(ww * ws, tw * ts) + pad)
+    y_wm = cy - 0.04 * H - wa * ws   # wordmark baseline at cy - 0.04H
+    y_tag = cy + 0.05 * H            # tagline top at cy + 0.05H
+    mark = _mark_group(spec, H)
+    ftw, ftt = ImageFont.truetype(sb, em), ImageFont.truetype(md, tag_em)
+    for tag, wc, tc in [("dark", CREAM, "#9A9488"), ("light", INK, "#6B6660")]:
+        body = (mark
+                + _text_group(wg, wu, wa, ws, H + g, y_wm, wc)
+                + _text_group(tg, tu, ta, ts, H + g, y_tag, tc))
+        open(os.path.join(out_dir, f"lockup_tag_{tag}.svg"), "w").write(_svg(W, H, body))
+        img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+        img.alpha_composite(raster(spec, H), (0, 0))
+        d = ImageDraw.Draw(img)
+        d.text((H + g, cy - 0.04 * H), WORD, font=ftw, fill=wc, anchor="ls")
+        d.text((H + g, cy + 0.05 * H), TAGLINE, font=ftt, fill=tc, anchor="la")
+        img.save(os.path.join(out_dir, f"lockup_tag_{tag}.png"))
+    print("lockup_tag %dx%d" % (W, H))
+
+def main(out_dir, sb, md):
     os.makedirs(out_dir, exist_ok=True)
-    emit_wordmark(out_dir, font_path)
-    emit_lockup(out_dir, font_path)
+    emit_wordmark(out_dir, sb)
+    emit_lockup(out_dir, sb)
+    emit_lockup_tag(out_dir, sb, md)
 
 if __name__ == "__main__":
-    main(sys.argv[1], sys.argv[2])
+    main(sys.argv[1], sys.argv[2], sys.argv[3])

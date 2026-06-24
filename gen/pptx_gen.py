@@ -44,9 +44,9 @@ def build(out, wordmark, icon_dark, icon_light):
 
     # title
     s = prs.slides.add_slide(blank); _bg(s)
-    _center_pic(s, wordmark, Inches(2.4), Inches(1.7))
-    _text(s, "Brand deck", 0, Inches(4.5), SW, Inches(0.6), 22, SLATE, align=PP_ALIGN.CENTER)
-    _text(s, "generated from one parametric source", 0, Inches(5.1), SW, Inches(0.5), 14, SLATE, align=PP_ALIGN.CENTER)
+    _center_pic(s, wordmark, Inches(2.3), Inches(1.7))
+    _text(s, "proven systems, built fast", 0, Inches(4.4), SW, Inches(0.6), 22, SLATE, align=PP_ALIGN.CENTER)
+    _text(s, "Brand deck · generated from one parametric source", 0, Inches(5.05), SW, Inches(0.5), 14, SLATE, align=PP_ALIGN.CENTER)
 
     # the mark
     s = prs.slides.add_slide(blank); _bg(s)

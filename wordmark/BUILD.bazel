@@ -4,7 +4,10 @@ package(default_visibility = ["//visibility:public"])
 # on-dark (cream) + on-light (ink); SVG (self-contained outlines) + PNG.
 genrule(
     name = "wordmark_set",
-    srcs = ["//fonts:SpaceGrotesk-SemiBold.ttf"],
+    srcs = [
+        "//fonts:SpaceGrotesk-Medium.ttf",
+        "//fonts:SpaceGrotesk-SemiBold.ttf",
+    ],
     outs = [
         "wordmark_dark.svg",
         "wordmark_dark.png",
@@ -14,7 +17,13 @@ genrule(
         "lockup_dark.png",
         "lockup_light.svg",
         "lockup_light.png",
+        "lockup_tag_dark.svg",
+        "lockup_tag_dark.png",
+        "lockup_tag_light.svg",
+        "lockup_tag_light.png",
     ],
-    cmd = "$(execpath //gen:wordmark) $(RULEDIR) $(execpath //fonts:SpaceGrotesk-SemiBold.ttf)",
+    cmd = "$(execpath //gen:wordmark) $(RULEDIR) " +
+          "$(execpath //fonts:SpaceGrotesk-SemiBold.ttf) " +
+          "$(execpath //fonts:SpaceGrotesk-Medium.ttf)",
     tools = ["//gen:wordmark"],
 )
