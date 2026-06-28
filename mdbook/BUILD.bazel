@@ -1,0 +1,28 @@
+"""fastverk mdBook theme — the brand applied to docs.
+
+`@brand//mdbook:theme` is an mdBook `theme/` overlay: brand color tokens
+(variables.css, per mdBook theme class), Space Grotesk (fonts.css + the canonical
+faces), accent application (custom.css — amber gradient on titles, accent links/
+sidebar), and the mark as favicon (copied from the canonical //gen mark, so the
+docs favicon tracks the one source).
+
+Consumed by docs builds (e.g. fastverk's mdBook sites) as the theme dir; pair
+with `book.toml`:
+
+    [output.html]
+    additional-css = ["theme/css/custom.css"]
+
+Eventually surfaced through `rules_fastverk`'s `fastverk_mdbook(theme = "@brand//mdbook:theme")`
+so every repo's docs are branded by construction.
+"""
+
+package(default_visibility = ["//visibility:public"])
+
+# The theme is a PURE static filegroup — no toolchain deps — so any repo can
+# consume it without pulling brand's Python mark generator into its build graph.
+# theme/favicon.svg is a committed copy of the canonical mark (regenerate with
+# `bazel build //gen:svgs && cp bazel-bin/gen/fastverk_full.svg mdbook/theme/favicon.svg`).
+filegroup(
+    name = "theme",
+    srcs = glob(["theme/**"]),
+)
