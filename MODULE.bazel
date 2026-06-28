@@ -7,7 +7,7 @@
 # regenerates every SVG, raster, icon, and the brandbook from one source.
 module(
     name = "brand",
-    version = "0.3.0",
+    version = "0.3.1",
 )
 
 bazel_dep(name = "platforms", version = "1.0.0")
