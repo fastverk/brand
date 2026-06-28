@@ -1,0 +1,64 @@
+/* fastverk brand theme for mdBook — typography + accent application.
+ *
+ * variables.css sets the color tokens (per mdBook theme class); fonts.css
+ * declares Space Grotesk. This file applies them: the brand sans on body +
+ * headings, the amber gradient on the page title, and accent touches on
+ * links, the sidebar active item, and code. Loaded via book.toml
+ * `additional-css` (after mdBook's own CSS, so it wins). */
+
+html,
+body,
+.menu-title {
+  font-family: var(--fv-sans);
+}
+
+.content h1,
+.content h2,
+.content h3,
+.content h4 {
+  font-family: var(--fv-sans);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+/* The top page title carries the brand's amber gradient (mirrors the mark
+   + the marketing hero). */
+.content h1 {
+  background: linear-gradient(180deg, var(--fv-accent), var(--fv-accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Sidebar active chapter in accent; brand wordmark weight on the title. */
+.chapter li.chapter-item a.active {
+  color: var(--fv-accent);
+  font-weight: 600;
+}
+
+.menu-title {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* Links keep the per-theme --links token; nudge hover toward the accent. */
+.content a:hover {
+  color: var(--fv-accent);
+}
+
+/* Inline code: subtle ink-tinted chip so it reads as "brand", not default. */
+.content code {
+  border-radius: 5px;
+}
+
+/* Primary "buttons"/callouts (used in landing-style doc pages) inherit the
+   amber gradient. Authors opt in with the .fv-cta class. */
+.fv-cta {
+  display: inline-block;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-weight: 600;
+  color: #15161A !important;
+  text-decoration: none;
+  background: linear-gradient(180deg, var(--fv-accent), var(--fv-accent-2));
+}
