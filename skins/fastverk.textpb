@@ -1,0 +1,66 @@
+# The fastverk brand identity as a meridian.theme.v1.Theme.
+#
+# This is the canonical fastverk *skin*: one Theme, authored once, that drives
+# every meridian renderer identically — the web console (applyTheme), the macOS
+# SwiftUI app, the JavaFX desktop UI, and the ratatui TUI. meridian itself stays
+# brand-neutral; the brand lives here.
+#
+# Tokens mirror the canonical brand palette (gen/gen_mark.py + the "midnight"
+# palette in gen_palettes.py, the same tokens mdbook/theme/css/custom.css uses):
+#   ink #15161A · ink-2 #1c1e24 · cream #ECE7DA · amber #F2C46A ·
+#   amber-deep #C9852B · muted #9A9488 · font Space Grotesk.
+#
+# Validated against //proto:theme.proto in meridian; compiled to fastverk.binpb
+# and fastverk.json by //skins:BUILD.bazel.
+
+id: "fastverk"
+display_name: "fastverk"
+
+# Dark is the canonical fastverk look (ink ground, cream ink, amber accent).
+dark {
+  bg: "#15161A"            # ink
+  surface: "#1c1e24"       # ink-2 (panels / cards)
+  fg: "#ECE7DA"            # cream
+  muted: "#9A9488"         # warm grey meta text
+  border: "#2A2C33"        # hairline (mdBook --sidebar-spacer)
+  accent: "#F2C46A"        # amber (links, selection, primary action)
+  accent_strong: "#C9852B" # amber-deep (gradient end / pressed)
+  on_accent: "#15161A"     # ink text on an amber fill
+  danger: "#D6452F"
+  success: "#5BB873"
+  code_bg: "#1c1e24"
+  code_fg: "#F0C98A"       # warm amber-tinted code (mdBook --inline-code-color)
+}
+
+# Light variant: cream ground, ink ink. Amber-deep is the accent here so it
+# carries contrast on the light field; on_accent flips to cream.
+light {
+  bg: "#ECE7DA"            # cream
+  surface: "#F5F1E8"       # raised cream
+  fg: "#15161A"            # ink
+  muted: "#6B6660"         # muted ink (wordmark light tagline color)
+  border: "#D8D0C0"
+  accent: "#C9852B"        # amber-deep reads on cream
+  accent_strong: "#15161A"
+  on_accent: "#ECE7DA"     # cream text on the accent fill
+  danger: "#C0392B"
+  success: "#3E7D4F"
+  code_bg: "#E4DDCD"
+  code_fg: "#15161A"
+}
+
+typography {
+  # Space Grotesk is the brand face; fall back through a system sans stack so
+  # surfaces without the font bundled still read on-brand-ish.
+  sans: "\"Space Grotesk\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif"
+  mono: "ui-monospace, SFMono-Regular, \"SF Mono\", Menlo, Consolas, \"Liberation Mono\", monospace"
+  base_size_px: 14
+  heading_weight: 600     # Space Grotesk SemiBold (the brand wordmark weight)
+  body_weight: 400
+  heading_tracking: "-0.015"
+}
+
+metrics {
+  radius_px: 6
+  unit_px: 4
+}

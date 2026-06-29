@@ -47,5 +47,37 @@ Each variant emits Icon-Composer-ready layers: `.bg.svg`, `.tint.svg`,
 
 ## Palette
 
-Deferred — the geometry is locked; colors are `Spec` parameters
-(`bg/fg/accent/tertiary`). `gen/gen_palettes.py` explores candidates.
+The geometry is locked; colors are `Spec` parameters
+(`bg/fg/accent/tertiary`). `gen/gen_palettes.py` explores candidates. The
+canonical tokens (the "midnight" palette) are:
+
+| token | hex | role |
+|---|---|---|
+| ink | `#15161A` | ground |
+| ink-2 | `#1c1e24` | raised surface |
+| cream | `#ECE7DA` | foreground |
+| amber | `#F2C46A` | accent |
+| amber-deep | `#C9852B` | accent (gradient end / pressed) |
+| muted | `#9A9488` | meta text |
+
+## Skin (`skins/`)
+
+The brand identity is also published as a **meridian skin** — a
+`meridian.theme.v1.Theme` that drives every meridian renderer (web console,
+SwiftUI app, JavaFX desktop, ratatui TUI) from one source, so the brand reads
+identically on every surface.
+
+`skins/fastverk.textpb` authors the Theme once (the tokens above), validated
+against meridian's `theme.proto` at build time. `//skins` emits both wire forms:
+
+```sh
+bazel build //skins:fastverk_binpb   # fastverk.binpb — native decoders (TUI/Swift/JavaFX)
+bazel build //skins:fastverk_json    # fastverk.json  — web `applyTheme(skin, mode)`
+bazel build //skins:fastverk         # both, as a stageable filegroup
+```
+
+`fastverk.binpb` is produced by `protoc --encode` (which also validates the
+textproto against the schema); `fastverk.json` is the proto3-JSON twin
+(snake_case field names matching meridian's `theme/web/theme.ts`). Brand depends
+on meridian only for the schema — it pulls no renderer code, and meridian itself
+stays brand-neutral.

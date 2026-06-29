@@ -15,6 +15,22 @@ bazel_dep(name = "bazel_skylib", version = "1.8.2")
 bazel_dep(name = "rules_python", version = "1.7.0")
 bazel_dep(name = "rules_tectonic", version = "0.2.0")
 
+# meridian — the proto-driven UI framework. Brand depends on it ONLY for the
+# theme SCHEMA (@meridian//proto:theme.proto): //skins compiles the fastverk
+# Theme textproto against it (protoc --encode) into fastverk.binpb/json. Brand
+# pulls no renderer code; meridian stays brand-neutral and the brand skin lives
+# here. protobuf provides protoc for the encode step.
+#
+# Requires meridian >= 0.2.3 (the release that exports theme.proto). For local
+# iteration before that publishes, uncomment the override below.
+bazel_dep(name = "meridian", version = "0.2.3")
+bazel_dep(name = "protobuf", version = "33.4")
+
+# local_path_override(
+#     module_name = "meridian",
+#     path = "/Volumes/Workspace/fastverk/repos/meridian",
+# )
+
 # ─── tectonic (the brandbook PDF) ───────────────────────────────────
 tectonic = use_extension("@rules_tectonic//tectonic:extensions.bzl", "tectonic")
 use_repo(tectonic, "tectonic")

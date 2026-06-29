@@ -1,0 +1,67 @@
+"""fastverk skins for meridian — the brand identity as a meridian.theme.v1.Theme.
+
+`skins/fastverk.textpb` authors the fastverk look ONCE as a Theme textproto
+(validated against meridian's schema). This package compiles it to the two wire
+forms every meridian renderer consumes:
+
+  * `//skins:fastverk_binpb` -> fastverk.binpb : canonical binary Theme. Feed it
+    to the native decoders (TUI `Palette::from_theme`, Swift, JavaFX), or ship
+    it as a plugin resource.
+  * `//skins:fastverk_json`  -> fastverk.json  : proto3-JSON twin for the web
+    binding — `import fastverk from ".../fastverk.json"; applyTheme(fastverk)`.
+
+meridian itself stays brand-neutral; the brand lives here. The schema contract
+is `@meridian//proto:theme.proto`.
+"""
+
+load("@rules_python//python:defs.bzl", "py_binary")
+
+package(default_visibility = ["//visibility:public"])
+
+# binpb — `protoc --encode` over meridian's theme.proto. This is also the
+# build-time VALIDATION gate: protoc rejects any textproto field/type that
+# doesn't match meridian.theme.v1.Theme, so the brand skin can't drift from the
+# contract. theme.proto has no imports, so a single --proto_path suffices.
+genrule(
+    name = "fastverk_binpb",
+    srcs = [
+        "fastverk.textpb",
+        "@meridian//proto:theme.proto",
+    ],
+    outs = ["fastverk.binpb"],
+    cmd = (
+        "$(execpath @protobuf//:protoc) " +
+        "--encode=meridian.theme.v1.Theme " +
+        "--proto_path=$$(dirname $(execpath @meridian//proto:theme.proto)) " +
+        "$(execpath @meridian//proto:theme.proto) " +
+        "< $(execpath fastverk.textpb) > $@"
+    ),
+    tools = ["@protobuf//:protoc"],
+)
+
+# textproto -> proto3-JSON (snake_case field names, matching theme/web/theme.ts).
+# Pure stdlib so brand's pip lock needs no protobuf wheel; the binpb genrule
+# above is the schema-validation gate.
+py_binary(
+    name = "textpb_to_json",
+    srcs = ["textpb_to_json.py"],
+)
+
+genrule(
+    name = "fastverk_json",
+    srcs = ["fastverk.textpb"],
+    outs = ["fastverk.json"],
+    cmd = "$(execpath :textpb_to_json) $(execpath fastverk.textpb) $@",
+    tools = [":textpb_to_json"],
+)
+
+# Both artifacts together — a consumer stages this filegroup next to the
+# renderer (binpb for native, json for web), the way @brand//mdbook:theme is
+# staged for docs.
+filegroup(
+    name = "fastverk",
+    srcs = [
+        ":fastverk_binpb",
+        ":fastverk_json",
+    ],
+)
