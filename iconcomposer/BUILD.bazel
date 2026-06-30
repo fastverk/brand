@@ -1,6 +1,9 @@
+load("@brando//:defs.bzl", "brand_iconcomposer")
+
 package(default_visibility = ["//visibility:public"])
 
-# Liquid Glass .icon bundles, generated from the mark layers.
+# Liquid Glass .icon bundles, generated from the mark layers via
+# @brando//marklib:iconcomposer.
 #   bazel build //iconcomposer:icons
 #   open bazel-bin/iconcomposer/fastverk_full.icon   # preview/export in Icon Composer
 # Compiling .icon -> runtime asset (Assets.car) needs Xcode's actool (see README).
@@ -16,13 +19,12 @@ _FILES = [
     "Assets/mark.svg",
 ]
 
-genrule(
+brand_iconcomposer(
     name = "icons",
+    generator = "//gen:iconcomposer",
     outs = [
         "fastverk_%s.icon/%s" % (v, f)
         for v in _VARIANTS
         for f in _FILES
     ],
-    cmd = "$(execpath //gen:iconcomposer) $(RULEDIR)",
-    tools = ["//gen:iconcomposer"],
 )

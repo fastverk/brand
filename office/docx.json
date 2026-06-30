@@ -1,0 +1,17 @@
+{
+  "name": "fastverk",
+  "subtitle": "Brand — document template",
+  "font": "Space Grotesk",
+  "ink": "#15161A",
+  "accent": "#B5781A",
+  "tertiary": "#4A565A",
+  "cream": "#ECE7DA",
+  "body": "The mark plays off F, V, the down-triangle (forall) and the horizontal arms (exists) — a deliberate golden-ratio construction on the unit circle, not a hand-traced drawing. Every asset — this document included — derives from one parametric source.",
+  "swatches": [
+    ["15161A", "bg midnight"],
+    ["ECE7DA", "fg cream"],
+    ["E0A33E", "accent amber"],
+    ["4A565A", "tertiary slate"]
+  ],
+  "on_dark_hexes": ["15161A", "4A565A"]
+}

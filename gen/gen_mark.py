@@ -2,11 +2,15 @@
 """fastverk mark — the canonical, fully-parametric construction.
 
 ONE Spec drives everything: the golden-ratio core, the gaps, the F-arm bevel,
-the perpendicular ARROW cut (anchored at a chosen "\" midpoint), the accent
+the perpendicular ARROW cut (anchored at a chosen "\\" midpoint), the accent
 ARROW region (which inner triangle to fill), and the tertiary fill. Geometry =
-shapely (exact CSG); emission = svgwrite, as canonical LAYERS
-(bg / tint / arrow / mark) + a composite — so the same Spec yields the flat SVG
+shapely (exact CSG). EMISSION goes through brando's marklib (the reusable
+layered-SVG / Icon-Composer convention), so the same Spec yields the flat SVG
 and the Icon Composer foreground/accent/background layers.
+
+This file is fastverk CONTENT: the geometry + palette. The reusable plumbing
+(geometry->SVG path, gradients, rounded-square bg, the Canvas/Layer emit model)
+lives in @brando//marklib.
 
 CLI: `gen_mark.py <out-dir>` emits every VARIANT's layered set into <out-dir>.
 """
@@ -14,10 +18,12 @@ import math
 import os
 import sys
 from dataclasses import dataclass
-import svgwrite
-from shapely.geometry import Polygon, box
+
 from shapely.affinity import rotate, translate
+from shapely.geometry import Polygon, box
 from shapely.ops import unary_union
+
+from marklib import Canvas, geom_to_path
 
 R3 = math.sqrt(3)
 
@@ -112,55 +118,44 @@ class Mark:
             return g.difference(ar) if ar is not None else g
         return self.top_cut()                       # "cut": just the top-right parallelogram
 
-    # ---- transform + emit ----
+    # ---- transform + emit (via brando marklib) ----
     def _tf(self):
         S = self.s.canvas; scale = 0.66*S / (R3); cy = self.s.center_y
         return lambda x, y: (S/2 + x*scale, S/2 - (y - cy)*scale)
-    def _d(self, g):
-        tf = self._tf()
-        if g.geom_type in ("MultiPolygon", "GeometryCollection"):
-            polys = [x for x in g.geoms if x.geom_type == "Polygon"]
-        else:
-            polys = [g]
-        out = []
-        for p in polys:
-            for r in [p.exterior, *p.interiors]:
-                out.append("M " + " L ".join(f"{a:.2f},{b:.2f}" for a, b in (tf(x, y) for x, y in r.coords)) + " Z")
-        return " ".join(out)
 
-    def render(self, path):                        # composite (tertiary UNDER, accent, fg OVER)
-        S = self.s.canvas; d = svgwrite.Drawing(path, size=(S, S), viewBox=f"0 0 {S} {S}")
-        d.add(d.rect(insert=(0, 0), size=(S, S), rx=self.s.bg_round*S, ry=self.s.bg_round*S, fill=self.s.bg))
+    def _d(self, g):                               # geometry -> SVG path (marklib)
+        return geom_to_path(g, self._tf())
+
+    def _canvas(self):                             # assemble the marklib Canvas for this Spec
+        c = Canvas(size=self.s.canvas, tf=self._tf(), bg_round=self.s.bg_round)
+        c.add_background(self.s.bg)
         tr = self.tertiary_region()
         if tr is not None:
-            d.add(d.path(d=self._d(tr), fill=self.s.tertiary)).update({"fill-rule": "evenodd"})
+            c.add_layer("tint", tr, self.s.tertiary)
         ar = self.arrow()
         if ar is not None:
-            fill = self.s.accent
-            if self.s.accent2:  # vertical linear gradient over the arrow (accent -> accent2)
-                g = d.linearGradient(start=(0, 0), end=(0, 1), id="arrowgrad")
-                g.add_stop_color(0, self.s.accent)
-                g.add_stop_color(1, self.s.accent2)
-                d.defs.add(g)
-                fill = "url(#arrowgrad)"
-            d.add(d.path(d=self._d(ar), fill=fill)).update({"fill-rule": "evenodd"})
-        d.add(d.path(d=self._d(self.mark()), fill=self.s.fg)).update({"fill-rule": "evenodd"})
-        d.save()
+            grad = (self.s.accent, self.s.accent2) if self.s.accent2 else None
+            c.add_layer("arrow", ar, self.s.accent, gradient=grad)
+        c.add_layer("mark", self.mark(), self.s.fg)
+        return c
+
+    def canvas(self):
+        return self._canvas()
 
     def _layer(self, path, g, fill):               # one transparent-bg shape layer
-        S = self.s.canvas; d = svgwrite.Drawing(path, size=(S, S), viewBox=f"0 0 {S} {S}")
-        d.add(d.path(d=self._d(g), fill=fill)).update({"fill-rule": "evenodd"}); d.save()
+        Canvas(size=self.s.canvas, tf=self._tf()).write_layer(
+            path, _named_layer(g, fill))
+
+    def render(self, path):                        # composite (tertiary UNDER, accent, fg OVER)
+        self._canvas().render(path)
 
     def emit(self, base):                          # canonical LAYERED vectors + composite
-        S = self.s.canvas                          # bg / tint / arrow / mark = Icon Composer layers
-        bg = svgwrite.Drawing(base + ".bg.svg", size=(S, S), viewBox=f"0 0 {S} {S}")
-        bg.add(bg.rect(insert=(0, 0), size=(S, S), rx=self.s.bg_round*S, ry=self.s.bg_round*S, fill=self.s.bg)); bg.save()
-        self._layer(base + ".mark.svg", self.mark(), self.s.fg)
-        ar = self.arrow()
-        if ar is not None: self._layer(base + ".arrow.svg", ar, self.s.accent)
-        tr = self.tertiary_region()
-        if tr is not None: self._layer(base + ".tint.svg", tr, self.s.tertiary)
-        self.render(base + ".svg")                 # composite for web / README / tray
+        self._canvas().emit(base)
+
+# brando's Layer (constructed lazily to keep the import surface small).
+def _named_layer(geom, fill):
+    from marklib import Layer
+    return Layer(name="layer", geom=geom, fill=fill)
 
 # The canonical family — both members share the construction; the accent/field
 # colors invert between them.

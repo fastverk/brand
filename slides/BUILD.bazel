@@ -1,9 +1,9 @@
-load("//doc:defs.bzl", "brand_doc")
+load("@brando//:defs.bzl", "brand_doc")
 
 package(default_visibility = ["//visibility:public"])
 
 # A sample slide deck in the fastverk beamer theme (\usetheme{fastverk}).
-# The theme + fonts are auto-bundled by brand_doc; figures are listed here.
+# The theme + fonts are auto-bundled via //doc:resources; figures are listed here.
 brand_doc(
     name = "deck",
     srcs = [
@@ -12,4 +12,5 @@ brand_doc(
         "//wordmark:wordmark_dark.png",
     ],
     main = "deck.tex",
+    resources = "//doc:resources",
 )

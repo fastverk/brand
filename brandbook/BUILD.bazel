@@ -1,10 +1,10 @@
-load("//doc:defs.bzl", "brand_doc")
+load("@brando//:defs.bzl", "brand_doc")
 
 package(default_visibility = ["//visibility:public"])
 
-# The brand guidelines PDF. The fastverk class + fonts are auto-bundled by
-# brand_doc; only the figures need listing. Figures resolve at their
-# workspace-relative paths (icons/, wordmark/).
+# The brand guidelines PDF. The fastverk class + fonts are auto-bundled via the
+# //doc:resources bundle; only the figures need listing. Figures resolve at their
+# workspace-relative paths (icons/, wordmark/, diagrams/).
 brand_doc(
     name = "brandbook",
     srcs = [
@@ -24,4 +24,5 @@ brand_doc(
         "//wordmark:lockup_tag_light.png",
     ],
     main = "main.tex",
+    resources = "//doc:resources",
 )

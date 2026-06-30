@@ -3,14 +3,15 @@ load("@rules_python//python:defs.bzl", "py_binary", "py_library")
 
 package(default_visibility = ["//visibility:public"])
 
-# The canonical mark construction (shapely CSG -> svgwrite layers).
+# The canonical fastverk mark construction (shapely CSG). EMISSION goes through
+# @brando//marklib (the reusable layered-SVG / composite convention).
 py_library(
     name = "gen_mark_lib",
     srcs = ["gen_mark.py"],
     imports = ["."],
     deps = [
+        "@brando//marklib",
         requirement("shapely"),
-        requirement("svgwrite"),
     ],
 )
 
@@ -19,46 +20,31 @@ py_binary(
     srcs = ["gen_mark.py"],
     imports = ["."],
     deps = [
+        "@brando//marklib",
         requirement("shapely"),
-        requirement("svgwrite"),
     ],
 )
 
-# Hermetic rasterizer (Pillow draws the layer polygons; writes PNG/.icns/.ico).
+# Hermetic rasterizer (brando's Pillow helpers draw the layer polygons).
 py_binary(
     name = "raster",
     srcs = ["raster.py"],
     imports = ["."],
     deps = [
         ":gen_mark_lib",
+        "@brando//marklib:raster",
         requirement("pillow"),
     ],
 )
 
-# Wordmark + lockups ("fastverk" in Space Grotesk; vector via fontTools, raster via Pillow).
-py_binary(
-    name = "wordmark",
-    srcs = [
-        "raster.py",
-        "wordmark.py",
-    ],
-    imports = ["."],
-    main = "wordmark.py",
-    deps = [
-        ":gen_mark_lib",
-        requirement("fonttools"),
-        requirement("pillow"),
-    ],
-)
-
-# Icon Composer .icon bundles (Liquid Glass; manifest + layer assets).
+# Icon Composer .icon bundles (brando's iconcomposer writer + the mark layers).
 py_binary(
     name = "iconcomposer",
     srcs = ["iconcomposer.py"],
     imports = ["."],
     deps = [
         ":gen_mark_lib",
-        requirement("svgwrite"),
+        "@brando//marklib:iconcomposer",
     ],
 )
 
@@ -73,23 +59,9 @@ py_binary(
     main = "diagrams.py",
     deps = [
         ":gen_mark_lib",
+        "@brando//marklib:raster",
         requirement("pillow"),
     ],
-)
-
-# Office templates (python-pptx / python-docx; also import into Google Slides/Docs).
-py_binary(
-    name = "pptx_gen",
-    srcs = ["pptx_gen.py"],
-    imports = ["."],
-    deps = [requirement("python-pptx")],
-)
-
-py_binary(
-    name = "docx_gen",
-    srcs = ["docx_gen.py"],
-    imports = ["."],
-    deps = [requirement("python-docx")],
 )
 
 # Canonical layered SVGs — every VARIANT x LAYER (keep in sync with gen_mark.py).

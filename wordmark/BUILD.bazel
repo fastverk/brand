@@ -1,13 +1,16 @@
+load("@brando//:defs.bzl", "brand_wordmark")
+
 package(default_visibility = ["//visibility:public"])
 
-# "fastverk" wordmark + mark/wordmark lockups, in Space Grotesk.
-# on-dark (cream) + on-light (ink); SVG (self-contained outlines) + PNG.
-genrule(
+# "fastverk" wordmark + mark/wordmark lockups, in Space Grotesk, via brando's
+# generic wordmark tool. The composite mark (full variant) is pre-rendered by
+# //gen (SVG) + //icons (PNG) and composited into the lockups.
+brand_wordmark(
     name = "wordmark_set",
-    srcs = [
-        "//fonts:SpaceGrotesk-Medium.ttf",
-        "//fonts:SpaceGrotesk-SemiBold.ttf",
-    ],
+    config = "wordmark.json",
+    mark_png = "//icons:fastverk_full_512.png",
+    mark_svg = "//gen:fastverk_full.svg",
+    medium_ttf = "//fonts:SpaceGrotesk-Medium.ttf",
     outs = [
         "wordmark_dark.svg",
         "wordmark_dark.png",
@@ -22,8 +25,5 @@ genrule(
         "lockup_tag_light.svg",
         "lockup_tag_light.png",
     ],
-    cmd = "$(execpath //gen:wordmark) $(RULEDIR) " +
-          "$(execpath //fonts:SpaceGrotesk-SemiBold.ttf) " +
-          "$(execpath //fonts:SpaceGrotesk-Medium.ttf)",
-    tools = ["//gen:wordmark"],
+    semibold_ttf = "//fonts:SpaceGrotesk-SemiBold.ttf",
 )

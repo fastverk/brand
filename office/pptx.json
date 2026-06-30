@@ -1,0 +1,15 @@
+{
+  "name": "fastverk",
+  "tagline": "proven systems, built fast",
+  "font": "Space Grotesk",
+  "bg": "#15161A",
+  "fg": "#ECE7DA",
+  "accent": "#E0A33E",
+  "tertiary": "#4A565A",
+  "swatches": [
+    ["#15161A", "15161A"],
+    ["#ECE7DA", "ECE7DA"],
+    ["#E0A33E", "E0A33E"],
+    ["#4A565A", "4A565A"]
+  ]
+}

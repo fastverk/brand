@@ -1,23 +1,30 @@
-load(":defs.bzl", "brand_resources")
+load("@brando//:defs.bzl", "brand_latex_class", "brand_resources")
 
 package(default_visibility = ["//visibility:public"])
 
-# The resource bundle every fastverk tectonic doc gets: the class + brand fonts.
-# Depend on this (or just use brand_doc, which defaults to it).
+# The fastverk LaTeX class + beamer theme + one-pager class, templated from
+# brando's base templates with the fastverk palette + Space Grotesk faces. The
+# class name is "fastverk" so the .tex files keep \documentclass{fastverk} /
+# \usetheme{fastverk} / \documentclass{fastverk-onepager}.
+brand_latex_class(
+    name = "classes",
+    accent = "E0A33E",
+    bg = "15161A",
+    bold_font = "SpaceGrotesk-SemiBold.ttf",
+    classname = "fastverk",
+    fg = "ECE7DA",
+    main_font = "SpaceGrotesk-Medium.ttf",
+    tertiary = "4A565A",
+    wordmark = "fastverk",
+)
+
+# The resource bundle every fastverk tectonic doc gets: the generated class(es) +
+# the brand fonts. Depend on this (pass it as brand_doc's `resources`).
 brand_resources(
     name = "resources",
     srcs = [
-        "beamerthemefastverk.sty",
-        "fastverk.cls",
-        "fastverk-onepager.cls",
+        ":classes",
         "//fonts:SpaceGrotesk-Medium.ttf",
         "//fonts:SpaceGrotesk-SemiBold.ttf",
     ],
 )
-
-exports_files([
-    "fastverk.cls",
-    "fastverk-onepager.cls",
-    "beamerthemefastverk.sty",
-    "defs.bzl",
-])

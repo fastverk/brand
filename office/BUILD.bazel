@@ -1,28 +1,23 @@
+load("@brando//:defs.bzl", "brand_office_docx", "brand_office_pptx")
+
 package(default_visibility = ["//visibility:public"])
 
 # Branded office templates, generated from the same mark/palette as everything
-# else. The .pptx imports into Google Slides; the .docx into Google Docs.
-# Text uses Space Grotesk (renders if installed on the viewer).
+# else via brando's generic generators. The .pptx imports into Google Slides; the
+# .docx into Google Docs. Text uses Space Grotesk (renders if installed).
 
-genrule(
+brand_office_pptx(
     name = "pptx",
-    srcs = [
-        "//icons:fastverk_full_512.png",
-        "//icons:fastverk_light_full_512.png",
-        "//wordmark:wordmark_dark.png",
-    ],
-    outs = ["fastverk-deck.pptx"],
-    cmd = "$(execpath //gen:pptx_gen) $@ " +
-          "$(execpath //wordmark:wordmark_dark.png) " +
-          "$(execpath //icons:fastverk_full_512.png) " +
-          "$(execpath //icons:fastverk_light_full_512.png)",
-    tools = ["//gen:pptx_gen"],
+    config = "pptx.json",
+    icon_dark = "//icons:fastverk_full_512.png",
+    icon_light = "//icons:fastverk_light_full_512.png",
+    out = "fastverk-deck.pptx",
+    wordmark_png = "//wordmark:wordmark_dark.png",
 )
 
-genrule(
+brand_office_docx(
     name = "docx",
-    srcs = ["//icons:fastverk_full_512.png"],
-    outs = ["fastverk-doc.docx"],
-    cmd = "$(execpath //gen:docx_gen) $@ $(execpath //icons:fastverk_full_512.png)",
-    tools = ["//gen:docx_gen"],
+    config = "docx.json",
+    icon = "//icons:fastverk_full_512.png",
+    out = "fastverk-doc.docx",
 )

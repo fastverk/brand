@@ -1,62 +1,40 @@
 #!/usr/bin/env python3
-"""Rasterize the mark — hermetic, via Pillow (no system rsvg/sips/iconutil).
+"""Rasterize the fastverk mark — hermetic, via brando's marklib raster helpers.
 
-Draws the shapely layer polygons directly (exterior filled, holes punched),
-composites bg / tint / arrow / mark, and renders the arrow as a vertical
-gradient when the spec sets accent2. Emits per-size PNGs for both modes (dark =
+Builds the mark Canvas per size and composites it with Pillow (Mask + vertical
+gradient for the accent arrow). Emits per-size PNGs for both modes (dark =
 mono-amber, light = amber-slate) plus .icns / .ico for the dark variants.
+
+fastverk CONTENT: the per-mode palette + the size/format policy. The Pillow
+plumbing (masks, gradients, compositing) lives in @brando//marklib:raster.
 
 CLI: raster.py <out-dir>
 """
 import dataclasses
 import os
 import sys
-from PIL import Image, ImageColor, ImageDraw
+
+from PIL import Image
+
 from gen_mark import Mark, Spec, VARIANTS, MODES
+from marklib import raster as mraster
 
 PNG_SIZES = [16, 32, 48, 64, 128, 256, 512, 1024]
 ICO_SIZES = [16, 32, 48, 64, 128, 256]
-
-def _polys(g):                                   # -> [(exterior_pts, [hole_pts, ...]), ...]
-    if g is None:
-        return []
-    geoms = g.geoms if g.geom_type in ("MultiPolygon", "GeometryCollection") else [g]
-    return [(list(p.exterior.coords), [list(r.coords) for r in p.interiors])
-            for p in geoms if p.geom_type == "Polygon"]
-
-def _mask(size, tf, polys):                       # L mask: exterior=255, holes=0
-    m = Image.new("L", (size, size), 0)
-    d = ImageDraw.Draw(m)
-    for ext, holes in polys:
-        d.polygon([tf(x, y) for x, y in ext], fill=255)
-        for h in holes:
-            d.polygon([tf(x, y) for x, y in h], fill=0)
-    return m
-
-def _vgrad(size, top, bot, y0, y1):               # vertical gradient image (top@y0 -> bot@y1 px)
-    t, b = ImageColor.getrgb(top), ImageColor.getrgb(bot)
-    span = max(1.0, y1 - y0)
-    col = Image.new("RGBA", (1, size))
-    for y in range(size):
-        f = min(1.0, max(0.0, (y - y0) / span))
-        col.putpixel((0, y), tuple(int(t[i] + (b[i] - t[i]) * f) for i in range(3)) + (255,))
-    return col.resize((size, size))
 
 def raster(spec, size):
     s = Spec(**{**spec.__dict__, "canvas": size})
     m = Mark(s); tf = m._tf()
     img = Image.new("RGBA", (size, size), (0, 0, 0, 0))
-    ImageDraw.Draw(img).rounded_rectangle([0, 0, size - 1, size - 1], radius=int(s.bg_round * size), fill=s.bg)
+    mraster.background_rect(img, size, s.bg, s.bg_round)
     if (tr := m.tertiary_region()) is not None:
-        img.paste(s.tertiary, (0, 0), _mask(size, tf, _polys(tr)))
+        mraster.paste_geom(img, size, tf, tr, s.tertiary)
     if (ar := m.arrow()) is not None:
-        amask = _mask(size, tf, _polys(ar))
-        if s.accent2:                             # vertical gradient over the arrow's bbox
-            _, miny, _, maxy = ar.bounds
-            img.paste(_vgrad(size, s.accent, s.accent2, tf(0, maxy)[1], tf(0, miny)[1]), (0, 0), amask)
+        if s.accent2:
+            mraster.paste_geom(img, size, tf, ar, s.accent, s.accent2, gradient=True)
         else:
-            img.paste(s.accent, (0, 0), amask)
-    img.paste(s.fg, (0, 0), _mask(size, tf, _polys(m.mark())))
+            mraster.paste_geom(img, size, tf, ar, s.accent)
+    mraster.paste_geom(img, size, tf, m.mark(), s.fg)
     return img
 
 def emit(out_dir, name, spec, packed=True):
