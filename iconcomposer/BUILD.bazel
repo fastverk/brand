@@ -21,10 +21,10 @@ _FILES = [
 
 brand_iconcomposer(
     name = "icons",
-    generator = "//gen:iconcomposer",
     outs = [
         "fastverk_%s.icon/%s" % (v, f)
         for v in _VARIANTS
         for f in _FILES
     ],
+    generator = "//gen:iconcomposer",
 )

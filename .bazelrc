@@ -5,10 +5,36 @@
 common --enable_bzlmod
 common --experimental_isolated_extension_usages
 
-common --registry=https://registry.fastverk.com/
+common --registry=https://registry.tbzl.dev/
 common --registry=https://bcr.bazel.build/
 
+# ─── hermetic_cc_toolchain (zig cc) sandbox mount ─────────────────────────────
+common --enable_platform_specific_config
+build:macos --sandbox_add_mount_pair=/var/tmp
+build:linux --sandbox_add_mount_pair=/tmp
+
+# ─── section GC (Linux/zig only) — protobuf upb linkarr pattern ───────────────
+build:linux --host_linkopt=-Wl,--no-gc-sections
+build:linux --linkopt=-Wl,--no-gc-sections
+
+# tectonic (//onepager:onepager) caches its TeX bundle under $HOME/.cache/Tectonic,
+# or $XDG_CACHE_HOME when set. The action runs REMOTELY on the RBE worker, where
+# neither is writable, and tectonic reports it without naming a path:
+#
+#   Compiling brand doc //onepager:onepager failed: (Exit 1)
+#   error: Permission denied (os error 13)
+#   caused by: Permission denied (os error 13)
+#
+# --action_env=HOME (previously the only setting here) does NOT fix this: it
+# forwards the CLIENT's $HOME value, which is meaningless on the worker. Proven
+# empirically — this repo carried that flag and still failed with the error above.
+#
+# Both variables are pinned because tectonic prefers TECTONIC_CACHE_DIR but falls
+# back to the XDG one; setting only the first leaves the fallback pointing at an
+# unwritable home. HOME is kept for non-tectonic actions that still expect it.
 common --action_env=HOME
+build --action_env=TECTONIC_CACHE_DIR=/tmp/tectonic-cache
+build --action_env=XDG_CACHE_HOME=/tmp/xdg-cache
 
 test --test_output=errors
 test --test_summary=terse
