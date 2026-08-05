@@ -1,0 +1,39 @@
+# fastverk — the BrandSpec.
+id: "fastverk"
+display_name: "fastverk"
+
+identity {
+  legal_name: "fastverk"
+  positioning:
+    "Build and CI infrastructure that is fast because it is hermetic: remote "
+    "execution, a shared cache, and a registry that pins what a build resolves."
+  story:
+    "A build system is only as fast as its slowest guarantee. fastverk invests in "
+    "the guarantees -- hermetic inputs, content-addressed outputs, a pinned "
+    "dependency set -- and the speed follows from them rather than from skipping "
+    "work."
+  voice: "Concrete and measured. Quote the number, name what was measured."
+  usage_rules:
+    "The amber is the accent, not a warning colour. Status uses the status roles."
+  usage_rules:
+    "The arrow is the mark's one motion. It runs left to right; do not mirror it."
+}
+
+# fastverk is the reference brand -- it produces the full artifact set, and every
+# other brand in the fleet is a subset of it. Declaring the whole catalog is
+# accurate here in a way it would not be elsewhere, and the gate holds it to it.
+catalog {
+  kinds: ARTIFACT_KIND_THEME_BINPB
+  kinds: ARTIFACT_KIND_THEME_JSON
+  kinds: ARTIFACT_KIND_MARK_SVG
+  kinds: ARTIFACT_KIND_MARK_PNG
+  kinds: ARTIFACT_KIND_ICON_COMPOSER
+  kinds: ARTIFACT_KIND_WORDMARK
+  kinds: ARTIFACT_KIND_LOCKUP
+  kinds: ARTIFACT_KIND_MDBOOK_THEME
+  kinds: ARTIFACT_KIND_LATEX_CLASS
+  kinds: ARTIFACT_KIND_BRANDBOOK_PDF
+  kinds: ARTIFACT_KIND_GUIDELINE_DIAGRAMS
+  kinds: ARTIFACT_KIND_OFFICE_PPTX
+  kinds: ARTIFACT_KIND_OFFICE_DOCX
+}

@@ -1,3 +1,5 @@
+load("@brando//:version.bzl", BRANDO_VERSION = "VERSION")
+load("@brando//pkg:defs.bzl", "brand_package", "brand_publish_plan")
 package(default_visibility = ["//visibility:public"])
 
 exports_files(["requirements.txt"])
@@ -22,4 +24,60 @@ filegroup(
         ":svgs",
         "//brandbook",
     ],
+)
+
+# ── the .brando package ──────────────────────────────────────────────────────
+#
+# fastverk is the REFERENCE brand: it produces the full artifact set, and every
+# other brand in the fleet is a strict subset of it. That asymmetry was the
+# finding that started this work -- graph and savault produced two artifact types
+# to fastverk's seventeen, not because they wanted less but because each was
+# wired by hand and stopped where its author stopped.
+#
+# So this package is the one that exercises the format properly. The catalog gate
+# holds the spec to it: every kind declared below has to be present, and it is
+# the only brand where declaring the whole vocabulary is honest.
+brand_package(
+    name = "fastverk_package",
+    assets = {
+        "theme.binpb": {"kind": "ARTIFACT_KIND_THEME_BINPB", "label": "//skins:fastverk_binpb"},
+        "theme.json": {"kind": "ARTIFACT_KIND_THEME_JSON", "label": "//skins:fastverk_json"},
+        "mark.svg": {"kind": "ARTIFACT_KIND_MARK_SVG", "label": "//gen:fastverk_full.svg"},
+        "mark-lower.svg": {"kind": "ARTIFACT_KIND_MARK_SVG", "label": "//gen:fastverk_lower.svg"},
+        "icon-512.png": {"kind": "ARTIFACT_KIND_MARK_PNG", "label": "//icons:fastverk_full_512.png", "size_px": 512},
+        "icon-1024.png": {"kind": "ARTIFACT_KIND_MARK_PNG", "label": "//icons:fastverk_full_1024.png", "size_px": 1024},
+        # Icon Composer emits a `.icon` BUNDLE; the manifest inside it is the
+        # part a consumer reads, and the bundle's other members are the layer
+        # PNGs already packaged above as icons.
+        "icon.json": {"kind": "ARTIFACT_KIND_ICON_COMPOSER", "label": "//iconcomposer:fastverk_full.icon/icon.json"},
+        "wordmark-dark.svg": {"kind": "ARTIFACT_KIND_WORDMARK", "label": "//wordmark:wordmark_dark.svg", "mode": "dark"},
+        "wordmark-light.svg": {"kind": "ARTIFACT_KIND_WORDMARK", "label": "//wordmark:wordmark_light.svg", "mode": "light"},
+        "lockup-dark.svg": {"kind": "ARTIFACT_KIND_LOCKUP", "label": "//wordmark:lockup_dark.svg", "mode": "dark"},
+        "lockup-light.svg": {"kind": "ARTIFACT_KIND_LOCKUP", "label": "//wordmark:lockup_light.svg", "mode": "light"},
+        "latex/fastverk.cls": {"kind": "ARTIFACT_KIND_LATEX_CLASS", "label": "//doc:fastverk.cls"},
+        "latex/fastverk-onepager.cls": {"kind": "ARTIFACT_KIND_LATEX_CLASS", "label": "//doc:fastverk-onepager.cls"},
+        "latex/beamerthemefastverk.sty": {"kind": "ARTIFACT_KIND_LATEX_CLASS", "label": "//doc:beamerthemefastverk.sty"},
+        "mdbook/css/custom.css": {"kind": "ARTIFACT_KIND_MDBOOK_THEME", "label": "//mdbook:theme/css/custom.css"},
+        "mdbook/head.hbs": {"kind": "ARTIFACT_KIND_MDBOOK_THEME", "label": "//mdbook:theme/head.hbs"},
+        "mdbook/favicon.svg": {"kind": "ARTIFACT_KIND_MDBOOK_THEME", "label": "//mdbook:theme/favicon.svg"},
+        "mdbook/fonts/fonts.css": {"kind": "ARTIFACT_KIND_MDBOOK_THEME", "label": "//mdbook:theme/fonts/fonts.css"},
+        "brandbook.pdf": {"kind": "ARTIFACT_KIND_BRANDBOOK_PDF", "label": "//brandbook:brandbook"},
+        "diagrams/construction.png": {"kind": "ARTIFACT_KIND_GUIDELINE_DIAGRAMS", "label": "//diagrams:construction.png"},
+        "diagrams/grid.png": {"kind": "ARTIFACT_KIND_GUIDELINE_DIAGRAMS", "label": "//diagrams:grid.png"},
+        "diagrams/clearspace.png": {"kind": "ARTIFACT_KIND_GUIDELINE_DIAGRAMS", "label": "//diagrams:clearspace.png"},
+        "office/fastverk-deck.pptx": {"kind": "ARTIFACT_KIND_OFFICE_PPTX", "label": "//office:fastverk-deck.pptx"},
+        "office/fastverk-doc.docx": {"kind": "ARTIFACT_KIND_OFFICE_DOCX", "label": "//office:fastverk-doc.docx"},
+    },
+    brando_version = BRANDO_VERSION,
+    source_repo = "fastverk/brand",
+    spec = "fastverk.textproto",
+)
+
+brand_publish_plan(
+    name = "fastverk_publish",
+    base_url = "https://github.com/fastverk/brand/releases/download/v0.1.0",
+    brand = "fastverk",
+    package = ":fastverk_package",
+    prefix = "",
+    version = BRANDO_VERSION,
 )
