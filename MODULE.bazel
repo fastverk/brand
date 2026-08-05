@@ -20,7 +20,7 @@ bazel_dep(name = "rules_tectonic", version = "0.2.0")
 # brando — the reusable brand pipeline (marklib, brand_doc/brand_skin/brand_icons/
 # brand_wordmark/brand_office/brand_mdbook_theme + the templated LaTeX class).
 # Resolved from the fastverk registry (mattmarshall/brando).
-bazel_dep(name = "brando", version = "0.2.0")
+bazel_dep(name = "brando", version = "0.5.0")
 
 # meridian — brand depends on it ONLY for the theme SCHEMA
 # (@meridian//proto:theme.proto): //skins compiles fastverk.textpb against it via
