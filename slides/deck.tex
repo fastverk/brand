@@ -9,8 +9,8 @@
   \centering
   \vfill
   \includegraphics[width=0.62\linewidth]{wordmark_dark.png}\\[1.0em]
-  {\color{fvslate}\large proven systems, built fast}\\[0.6em]
-  {\color{fvslate}\footnotesize Brand deck · generated from \texttt{//brand}}
+  {\color{brandmuted}\large proven systems, built fast}\\[0.6em]
+  {\color{brandmuted}\footnotesize Brand deck · generated from \texttt{//brand}}
   \vfill
 \end{frame}
 
@@ -36,10 +36,10 @@
   \vfill
   \begin{columns}[c]
     \begin{column}{0.5\textwidth}\centering
-      \includegraphics[width=0.62\linewidth]{fastverk_full_512.png}\\[0.4em]{\color{fvslate}\small dark}
+      \includegraphics[width=0.62\linewidth]{fastverk_full_512.png}\\[0.4em]{\color{brandmuted}\small dark}
     \end{column}
     \begin{column}{0.5\textwidth}\centering
-      \includegraphics[width=0.62\linewidth]{fastverk_light_full_512.png}\\[0.4em]{\color{fvslate}\small light}
+      \includegraphics[width=0.62\linewidth]{fastverk_light_full_512.png}\\[0.4em]{\color{brandmuted}\small light}
     \end{column}
   \end{columns}
   \vfill
@@ -48,9 +48,9 @@
 % ── color ────────────────────────────────────────────────────────────
 \begin{frame}{Color}
   \begin{tikzpicture}
-    \foreach \c/\n [count=\i] in {fvbg/15161A, fvfg/ECE7DA, fvaccent/E0A33E, fvslate/4A565A} {
+    \foreach \c/\n [count=\i] in {brandbg/15161A, brandfg/ECE7DA, brandaccent/F2C46A, brandmuted/9A9488} {
       \fill[\c] (\i*2.6,0) rectangle ++(2.2,1.6);
-      \node[anchor=north west, text=fvfg, font=\scriptsize\ttfamily] at (\i*2.6,-0.1) {\n};
+      \node[anchor=north west, text=brandfg, font=\scriptsize\ttfamily] at (\i*2.6,-0.1) {\n};
     }
   \end{tikzpicture}
   \vfill

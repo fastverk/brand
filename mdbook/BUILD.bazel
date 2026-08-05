@@ -13,17 +13,20 @@ load("@brando//:defs.bzl", "brand_mdbook_theme")
 
 package(default_visibility = ["//visibility:public"])
 
+# brando 0.2.0: the palette comes from the SKIN. The seven colour attributes that
+# used to be here were the third place fastverk typed its palette, after
+# skins/fastverk.textpb and gen/gen_mark.py's Spec — and they matched the skin
+# exactly, which is the good outcome of a habit that also produced the LaTeX
+# class's drifted accent (see //doc:classes).
 brand_mdbook_theme(
     name = "theme",
-    accent = "#F2C46A",
-    accent2 = "#C9852B",
-    cream = "#ECE7DA",
     favicon = "//gen:fastverk_full.svg",
     font_family = "Space Grotesk",
-    ink = "#15161A",
-    ink2 = "#1c1e24",
     medium_ttf = "//fonts:SpaceGrotesk-Medium.ttf",
-    muted = "#9A9488",
+    # NOT a Theme role, and not the same colour as the skin's `border` (#2A2C33).
+    # mdBook wants a slate for its rules; meridian.theme.v1 has no such role, so
+    # this stays explicit rather than being collapsed onto the nearest one.
+    overrides = {"DARK_BORDER": "#4A565A"},
     semibold_ttf = "//fonts:SpaceGrotesk-SemiBold.ttf",
-    tertiary = "#4A565A",
+    skin = "//skins:fastverk_json",
 )

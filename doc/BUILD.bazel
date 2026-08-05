@@ -6,15 +6,20 @@ package(default_visibility = ["//visibility:public"])
 # brando's base templates with the fastverk palette + Space Grotesk faces. The
 # class name is "fastverk" so the .tex files keep \documentclass{fastverk} /
 # \usetheme{fastverk} / \documentclass{fastverk-onepager}.
+# brando 0.2.0: palette from the skin, in the skin's own notation.
+#
+# THIS CHANGES THE ACCENT, DELIBERATELY. The attribute said E0A33E; the skin says
+# F2C46A. That is the drift the 0.2.0 work set out to remove — the same colour
+# authored in five places had already disagreed in two of them, and nothing could
+# tell you which was intended. The skin is the brand's canonical statement of its
+# own palette, so the skin wins; if E0A33E was the deliberate print value, change
+# it in skins/fastverk.textpb where every artifact will pick it up.
 brand_latex_class(
     name = "classes",
-    accent = "E0A33E",
-    bg = "15161A",
     bold_font = "SpaceGrotesk-SemiBold.ttf",
     classname = "fastverk",
-    fg = "ECE7DA",
     main_font = "SpaceGrotesk-Medium.ttf",
-    tertiary = "4A565A",
+    skin = "//skins:fastverk_json",
     wordmark = "fastverk",
 )
 
