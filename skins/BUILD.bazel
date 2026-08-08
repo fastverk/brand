@@ -14,10 +14,45 @@ contract is `@meridian//proto:theme.proto`; the pipeline is @brando//skins.
 """
 
 load("@brando//:defs.bzl", "brand_skin")
+load("@brando//pkg:suite.bzl", "brand_contrast_test")
 
 package(default_visibility = ["//visibility:public"])
 
 brand_skin(
     name = "fastverk",
     textpb = "fastverk.textpb",
+)
+
+# ── verk (verk.fast) ─────────────────────────────────────────────────────────
+#
+# The same identity with the amber deepened so it survives contact with cream.
+# See skins/verk.textpb for the measured pairs.
+brand_skin(
+    name = "verk",
+    textpb = "verk.textpb",
+)
+
+# brando ships a WCAG gate (@brando//marklib:palette) that no brand in the fleet
+# was running. It is now wired for BOTH brands.
+#
+# ⛔ IT WAS OFF FOR fastverk BECAUSE fastverk FAILED IT. Against the old canonical
+# palette it reported
+#
+#   [error] light:on_accent/accent (#ECE7DA on #C9852B) is 2.47:1, needs 4.5:1
+#
+# which is exactly the weak white-on-amber the brand was carrying in production.
+# Moving the accent to #B5781A (dark) / #96560D (light) clears it: 4.88:1 and
+# 4.68:1 respectively. With the palette fixed there is no longer a reason to leave
+# the canonical brand ungated, and leaving it off would let the same regression
+# return unnoticed.
+#
+#   bazel build //skins:all_contrast && cat bazel-bin/skins/*_contrast.txt
+brand_contrast_test(
+    name = "verk_contrast",
+    skin = ":verk_json",
+)
+
+brand_contrast_test(
+    name = "fastverk_contrast",
+    skin = ":fastverk_json",
 )

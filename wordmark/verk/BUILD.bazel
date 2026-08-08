@@ -1,0 +1,47 @@
+"""The "verk" wordmark — the verk.fast property.
+
+`verk.fast` is a domain hack: read whole, the host and the TLD spell fastverk
+backwards. So the property wants the SHORT wordmark, not a second brand — same
+face (Space Grotesk SemiBold), same tracking, same ink/cream pair, same mark
+construction; the word is "verk" and the mark is rendered in the deepened amber
+ramp (`//gen:palette.bzl`).
+
+The word is a CONFIG FIELD, not a hand-edited SVG: brando's wordmark tool
+outlines the typeface with fontTools at build time, so "verk" is set from the
+same font the "fastverk" wordmark is set from and cannot drift from it.
+
+This lives in its own package because brando's wordmark tool writes fixed
+filenames (`wordmark_dark.svg`, `lockup_dark.svg`, ...) into $(RULEDIR), and
+//wordmark already claims those names for "fastverk". One package per word is
+cheaper and clearer than teaching the tool to rename its outputs.
+
+    bazel build //wordmark/verk:wordmark_set
+    open bazel-bin/wordmark/verk/lockup_tag_dark.png
+"""
+
+load("@brando//:defs.bzl", "brand_wordmark")
+
+package(default_visibility = ["//visibility:public"])
+
+brand_wordmark(
+    name = "wordmark_set",
+    outs = [
+        "lockup_dark.png",
+        "lockup_dark.svg",
+        "lockup_light.png",
+        "lockup_light.svg",
+        "lockup_tag_dark.png",
+        "lockup_tag_dark.svg",
+        "lockup_tag_light.png",
+        "lockup_tag_light.svg",
+        "wordmark_dark.png",
+        "wordmark_dark.svg",
+        "wordmark_light.png",
+        "wordmark_light.svg",
+    ],
+    config = "wordmark.json",
+    mark_png = "//icons:verk_full_512.png",
+    mark_svg = "//gen:verk_full.svg",
+    medium_ttf = "//fonts:SpaceGrotesk-Medium.ttf",
+    semibold_ttf = "//fonts:SpaceGrotesk-SemiBold.ttf",
+)

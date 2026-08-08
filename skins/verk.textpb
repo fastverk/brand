@@ -1,0 +1,77 @@
+# The verk (verk.fast) identity as a meridian.theme.v1.Theme.
+#
+# Same family as skins/fastverk.textpb — same ink, same cream, same Space
+# Grotesk, same metrics. What differs is the AMBER, and only the amber, because
+# the canonical one does not survive being put next to either of its own
+# neighbours:
+#
+#   fastverk dark   on_accent #15161A on accent #F2C46A   11.09:1  fine
+#   fastverk light  on_accent #ECE7DA on accent #C9852B    2.47:1  UNREADABLE
+#   fastverk light  accent    #C9852B on bg     #ECE7DA    2.47:1  link text, under AA
+#
+# The middle line is the one `bazel build //skins:fastverk_contrast` reports as
+# an ERROR: cream text on the amber fill is the white-on-amber pairing, measured.
+# Here it is 4.68:1.
+#
+# WHY THE TWO MODES DO NOT SHARE ONE ACCENT. They are load-bearing in opposite
+# directions. On ink the accent is a light-on-dark link and wants to be as bright
+# as it can while still separating from the cream mark beside it (#B5781A,
+# 4.88:1 on ink). On cream it is dark-on-light and wants the opposite (#96560D,
+# 4.68:1 on cream). One value cannot do both: an accent between cream (L .800)
+# and ink (L .008) tops out at sqrt(14.64) = 3.83:1 on each edge at once.
+#
+# Both hexes are named colours in gen/gen_mark.py PALETTES ("deep" and "bronze"),
+# so the skin and the mark are drawing from the same set rather than from two
+# people's eyes.
+#
+# Validated against //proto:theme.proto in meridian; compiled to verk.binpb and
+# verk.json by //skins:BUILD.bazel, and gated by //skins:verk_contrast.
+
+id: "verk"
+display_name: "verk"
+
+# Dark is the canonical look (ink ground, cream ink, deepened amber accent).
+dark {
+  bg: "#15161A"            # ink              (unchanged)
+  surface: "#1c1e24"       # ink-2            (unchanged)
+  fg: "#ECE7DA"            # cream            (unchanged)
+  muted: "#9A9488"         # warm grey        (unchanged)
+  border: "#2A2C33"        # hairline         (unchanged)
+  accent: "#B5781A"        # amber, deepened one step — 4.88:1 on the ink ground
+  accent_strong: "#845712" # the arrow gradient's far stop (pressed)
+  on_accent: "#15161A"     # ink on the amber fill — 4.88:1
+  danger: "#D6452F"
+  success: "#5BB873"
+  code_bg: "#1c1e24"
+  code_fg: "#F0C98A"
+}
+
+# Light: cream ground, ink ink, the amber deeper still so it carries as link text.
+light {
+  bg: "#ECE7DA"            # cream            (unchanged)
+  surface: "#F5F1E8"       # raised cream     (unchanged)
+  fg: "#15161A"            # ink              (unchanged)
+  muted: "#6B6660"         # muted ink        (unchanged)
+  border: "#D8D0C0"        #                  (unchanged)
+  accent: "#96560D"        # 4.68:1 on cream — the canonical #C9852B is 2.47:1
+  accent_strong: "#15161A"
+  on_accent: "#ECE7DA"     # cream on the amber fill — 4.68:1, was 2.47:1
+  danger: "#C0392B"
+  success: "#3E7D4F"
+  code_bg: "#E4DDCD"
+  code_fg: "#15161A"
+}
+
+typography {
+  sans: "\"Space Grotesk\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif"
+  mono: "ui-monospace, SFMono-Regular, \"SF Mono\", Menlo, Consolas, \"Liberation Mono\", monospace"
+  base_size_px: 14
+  heading_weight: 600
+  body_weight: 400
+  heading_tracking: "-0.015"
+}
+
+metrics {
+  radius_px: 6
+  unit_px: 4
+}

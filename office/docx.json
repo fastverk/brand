@@ -10,7 +10,7 @@
   "swatches": [
     ["15161A", "bg midnight"],
     ["ECE7DA", "fg cream"],
-    ["E0A33E", "accent amber"],
+    ["B5781A", "accent amber"],
     ["4A565A", "tertiary slate"]
   ],
   "on_dark_hexes": ["15161A", "4A565A"]

@@ -4,12 +4,12 @@
   "font": "Space Grotesk",
   "bg": "#15161A",
   "fg": "#ECE7DA",
-  "accent": "#E0A33E",
+  "accent": "#B5781A",
   "tertiary": "#4A565A",
   "swatches": [
     ["#15161A", "15161A"],
     ["#ECE7DA", "ECE7DA"],
-    ["#E0A33E", "E0A33E"],
+    ["#B5781A", "B5781A"],
     ["#4A565A", "4A565A"]
   ]
 }

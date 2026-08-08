@@ -45,20 +45,80 @@ bazel build //brandbook:brandbook   # the brand guidelines PDF
 Each variant emits Icon-Composer-ready layers: `.bg.svg`, `.tint.svg`,
 `.arrow.svg`, `.mark.svg`, and a composite `.svg`.
 
+## Properties
+
+`fastverk` is the reference property. `verk` is the same identity for
+**`verk.fast`** — a domain hack, since host + TLD read as "fastverk" backwards.
+It is the same construction and the same generator; the word is short and the
+amber is deepened (below).
+
+```sh
+bazel build //gen:verk_svgs           # verk_full.svg, verk_lower.svg + layers
+bazel build //icons:verk_icon_set     # verk_*.png / .icns / .ico
+bazel build //wordmark/verk:wordmark_set   # the "verk" wordmark + lockups
+bazel build //skins:verk              # the verk meridian skin
+```
+
+Nothing about the verk mark is hand-drawn or hand-recolored: `--prefix` and
+`--palette` are generator flags, `word` is a field in
+`wordmark/verk/wordmark.json`, and the palette NAME lives once in
+`gen/palette.bzl` so the SVG set and the icon set cannot drift apart.
+
 ## Palette
 
 The geometry is locked; colors are `Spec` parameters
-(`bg/fg/accent/tertiary`). `gen/gen_palettes.py` explores candidates. The
-canonical tokens (the "midnight" palette) are:
+(`bg/fg/accent/accent2/tertiary`), grouped into named sets in `gen_mark.PALETTES`.
+`gen/gen_palettes.py` renders every set and writes `palette_contrast.txt`, the
+measured WCAG ratio of each edge the mark actually has:
+
+```sh
+bazel run //gen:gen_palettes -- /tmp/palettes
+```
+
+The canonical tokens (the "deep" palette, canonical since 2026-08-07 — it was
+"midnight", `#F2C46A` → `#C9852B`) are:
 
 | token | hex | role |
 |---|---|---|
 | ink | `#15161A` | ground |
 | ink-2 | `#1c1e24` | raised surface |
 | cream | `#ECE7DA` | foreground |
-| amber | `#F2C46A` | accent |
-| amber-deep | `#C9852B` | accent (gradient end / pressed) |
+| amber | `#B5781A` | accent |
+| amber-deep | `#845712` | accent (gradient end / pressed) |
 | muted | `#9A9488` | meta text |
+
+In the **light** skin the accent is `#96560D` rather than the canonical amber:
+there it is real text on the cream ground and has to clear 4.5:1, which `#B5781A`
+(3.00:1 on cream) does not. See `skins/fastverk.textpb`.
+
+### The amber sits between cream and ink, and cannot clear both
+
+In the `full` variant the cream mark **crosses** the accent field (the F arm) and
+rings it on every side, so cream|amber is a real edge. The old canonical amber
+(`#F2C46A`) measured **1.32:1** against cream — the arm dissolved into the field
+it crosses — while measuring 11.09:1 against the ink ground. Those two move in
+opposite directions
+by construction: with cream at L .800 and ink at L .008, an accent between them
+tops out at √14.64 = **3.83:1 on both edges at once**. 4.5:1 on both is
+unreachable, not merely unchosen.
+
+| palette | accent | cream \| accent | accent \| ink |
+|---|---|---|---|
+| `midnight` (was canonical) | `#F2C46A` | 1.32:1 | 11.09:1 |
+| `deep` (canonical, and verk) | `#B5781A` | 3.00:1 | 4.88:1 |
+| `copper` | `#B05D15` | 3.85:1 | 3.81:1 |
+| `bronze` | `#96560D` | 4.68:1 | 3.13:1 |
+
+`deep` clears the 3:1 WCAG 1.4.11 floor on the cream edge — the correct floor for
+a graphical boundary rather than text — and 4.5:1 against the ink ground, so the
+silhouette keeps its pop.
+
+`//skins:fastverk_contrast` and `//skins:verk_contrast` run brando's WCAG gate
+over both skins, and both **pass**. The gate used to be off for fastverk exactly
+because fastverk failed it — `light:on_accent/accent (#ECE7DA on #C9852B) is
+2.47:1, needs 4.5:1`, the weak white-on-amber the brand carried in production.
+The light skin's accent is now `#96560D` (4.68:1 on cream), so there is no longer
+a reason to leave the canonical brand ungated.
 
 ## Skin (`skins/`)
 

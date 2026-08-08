@@ -9,11 +9,17 @@ import math
 import os
 import sys
 from PIL import Image, ImageDraw
-from gen_mark import Mark, Spec, VARIANTS
+from gen_mark import Mark, Spec, spec_for
 from raster import raster
 
 R3 = math.sqrt(3)
-INK, AMBER, SLATE = "#15161A", "#E0A33E", "#4A565A"
+# ⚠ AMBER WAS #E0A33E — a fifth place the accent was written down, and one that
+# already disagreed with the skin before the palette moved. Take it from the
+# canonical Spec so the guideline figures cannot annotate the mark in a colour
+# the mark is not drawn in.
+INK, SLATE = "#15161A", "#4A565A"
+AMBER = spec_for("full").accent
+AMBER_RGB = tuple(int(AMBER[i:i + 2], 16) for i in (1, 3, 5))
 PAPER = "#F4F1EA"
 GUIDE = "#CFC8B8"
 
@@ -40,10 +46,10 @@ def construction(path, S=900):
 def grid(path, S=900):
     """The icon with the optical-center crosshair."""
     base = Image.new("RGBA", (S, S), PAPER)
-    base.alpha_composite(raster(dataclasses.replace(VARIANTS["full"], canvas=S), S))
+    base.alpha_composite(raster(dataclasses.replace(spec_for("full"), canvas=S), S))
     d = ImageDraw.Draw(base)
-    d.line([(0, S//2), (S, S//2)], fill=(224, 163, 62, 230), width=3)
-    d.line([(S//2, 0), (S//2, S)], fill=(224, 163, 62, 140), width=2)
+    d.line([(0, S//2), (S, S//2)], fill=AMBER_RGB + (230,), width=3)
+    d.line([(S//2, 0), (S//2, S)], fill=AMBER_RGB + (140,), width=2)
     base.convert("RGB").save(path)
 
 def clearspace(path, S=900):
@@ -52,7 +58,7 @@ def clearspace(path, S=900):
     off = (S - iconsz) // 2
     clr = int(iconsz * 0.20)                                                   # = corner radius
     img = Image.new("RGBA", (S, S), PAPER)
-    img.alpha_composite(raster(dataclasses.replace(VARIANTS["full"], canvas=iconsz), iconsz), (off, off))
+    img.alpha_composite(raster(dataclasses.replace(spec_for("full"), canvas=iconsz), iconsz), (off, off))
     d = ImageDraw.Draw(img)
     x0, y0, x1, y1 = off - clr, off - clr, off + iconsz + clr, off + iconsz + clr
     dash = 14

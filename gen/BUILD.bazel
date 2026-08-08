@@ -1,5 +1,6 @@
 load("@brand_pip//:requirements.bzl", "requirement")
 load("@rules_python//python:defs.bzl", "py_binary", "py_library")
+load(":palette.bzl", "FASTVERK_PALETTE", "VERK_PALETTE")
 
 package(default_visibility = ["//visibility:public"])
 
@@ -48,6 +49,24 @@ py_binary(
     ],
 )
 
+# Palette previews + the measured edge-contrast report. A palette used to be
+# chosen by rendering candidates and looking at them; this emits the same
+# previews AND the WCAG numbers behind them, so the choice is reviewable.
+py_binary(
+    name = "gen_palettes",
+    srcs = [
+        "gen_palettes.py",
+        "raster.py",
+    ],
+    imports = ["."],
+    main = "gen_palettes.py",
+    deps = [
+        ":gen_mark_lib",
+        "@brando//marklib:raster",
+        requirement("pillow"),
+    ],
+)
+
 # Brandbook guideline diagrams (construction grid, optical center, clear space).
 py_binary(
     name = "diagrams",
@@ -81,6 +100,28 @@ _LAYERS = [
 genrule(
     name = "svgs",
     outs = ["fastverk_%s.%s" % (v, lyr) for v in _VARIANTS for lyr in _LAYERS],
-    cmd = "$(execpath :gen_mark) $(RULEDIR)",
+    # ⚠ --palette PASSED EXPLICITLY, not left to the generator default. It was
+    # implicit while fastverk and the default were both "midnight"; once the brand
+    # moved to "deep" that coincidence would have silently kept shipping the old
+    # colours from //gen while //icons used the new ones.
+    cmd = "$(execpath :gen_mark) $(RULEDIR) --palette " + FASTVERK_PALETTE,
+    tools = [":gen_mark"],
+)
+
+# ── verk ─────────────────────────────────────────────────────────────────────
+#
+# The `verk.fast` property (the domain hack: "verk.fast" is "fastverk" read
+# backwards). SAME construction, same geometry, same generator — only the output
+# PREFIX and the named PALETTE differ, both of which are generator flags. It is
+# the fastverk mark re-rendered, not a second mark, which is the whole point of
+# keeping the colours in the Spec.
+#
+# The palette name is `VERK_PALETTE` in //gen:palette.bzl — one place, shared
+# with //icons so the lockup's mark and its icon cannot disagree.
+
+genrule(
+    name = "verk_svgs",
+    outs = ["verk_%s.%s" % (v, lyr) for v in _VARIANTS for lyr in _LAYERS],
+    cmd = "$(execpath :gen_mark) $(RULEDIR) --prefix verk --palette " + VERK_PALETTE,
     tools = [":gen_mark"],
 )
