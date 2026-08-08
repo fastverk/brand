@@ -1,5 +1,5 @@
 load("@brando//:defs.bzl", "brand_icons")
-load("//gen:palette.bzl", "FASTVERK_PALETTE", "VERK_PALETTE")
+load("//gen:palette.bzl", "VERK_PALETTE")
 
 package(default_visibility = ["//visibility:public"])
 
