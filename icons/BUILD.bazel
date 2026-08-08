@@ -1,4 +1,5 @@
 load("@brando//:defs.bzl", "brand_icons")
+load("//gen:palette.bzl", "FASTVERK_PALETTE", "VERK_PALETTE")
 
 package(default_visibility = ["//visibility:public"])
 
@@ -44,5 +45,40 @@ _PACKED = [
 brand_icons(
     name = "icon_set",
     outs = _PNGS + _LIGHT_PNGS + _PACKED,
+    # ⚠ NO `palette` ARG — `brand_icons` is a macro over the rasterizer and takes
+    # none. The canonical palette therefore has to BE the rasterizer's default,
+    # which is why FASTVERK_PALETTE and the generator default are kept equal and
+    # //gen:svgs asserts it explicitly. Changing one without the other would make
+    # the icon and the lockup's mark disagree.
     rasterizer = "//gen:raster",
+)
+
+# ── verk (verk.fast) ─────────────────────────────────────────────────────────
+#
+# The same rasterizer, the same variants and sizes; only the filename prefix and
+# the palette differ, and both are flags. brand_icons' `outs`/`rasterizer` form
+# does not forward extra flags, so this is a plain genrule — the same shape the
+# macro expands to, with `--prefix`/`--palette` appended.
+_VERK_OUTS = [
+    "verk_%s_%d.png" % (v, s)
+    for v in _VARIANTS
+    for s in _PNG_SIZES
+] + [
+    "verk_light_%s_%d.png" % (v, s)
+    for v in _VARIANTS
+    for s in _PNG_SIZES
+] + [
+    "verk_%s.%s" % (v, ext)
+    for v in _VARIANTS
+    for ext in [
+        "icns",
+        "ico",
+    ]
+]
+
+genrule(
+    name = "verk_icon_set",
+    outs = _VERK_OUTS,
+    cmd = "$(execpath //gen:raster) $(RULEDIR) --prefix verk --palette " + VERK_PALETTE,
+    tools = ["//gen:raster"],
 )

@@ -12,8 +12,12 @@ This file is fastverk CONTENT: the geometry + palette. The reusable plumbing
 (geometry->SVG path, gradients, rounded-square bg, the Canvas/Layer emit model)
 lives in @brando//marklib.
 
-CLI: `gen_mark.py <out-dir>` emits every VARIANT's layered set into <out-dir>.
+CLI: `gen_mark.py <out-dir> [--prefix P] [--palette NAME] [--variant V]...`
+emits every VARIANT's layered set into <out-dir> as `<prefix>_<variant>.<layer>`.
+The defaults reproduce the canonical fastverk set (`fastverk_*`, "midnight").
 """
+import argparse
+import dataclasses
 import math
 import os
 import sys
@@ -164,20 +168,108 @@ VARIANTS = {
     "lower": Spec(cut_anchor="mid_lower", arrow_region="lower_inner", tertiary_fill="interior"),
 }
 
-# Color modes (palette + arrow gradient). dark = mono-amber, light = amber-slate.
-MODES = {
-    "dark":  {},  # the Spec defaults: mono-amber gradient on midnight
-    "light": {"bg": "#ECE7DA", "fg": "#15161A", "accent": "#E0A33E", "accent2": "#4A565A"},
+# ─── palettes ────────────────────────────────────────────────────────────────
+#
+# The geometry is locked; the COLOURS are Spec parameters, so a palette is a
+# named override set rather than a second construction. Each entry gives the
+# dark (canonical) overrides and the light-mode ones — the same two-mode axis
+# `MODES` used to carry on its own, now keyed by palette so a brand property can
+# pick a ramp without forking the generator.
+#
+# WHY THE NON-CANONICAL RAMPS EXIST. In the `full` variant the cream mark CROSSES
+# the accent field (the F arm) and rings it on every side, so cream|accent is a
+# real edge, not an abstraction. Measured (WCAG 2.1 relative luminance),
+# cream #ECE7DA against the accent, and the accent against the ink ground:
+#
+#   palette     accent    cream|accent   accent|ink   reads as
+#   midnight    #F2C46A       1.32:1       11.09:1    canonical; the arm dissolves
+#   deep        #B5781A       3.00:1        4.86:1    amber, deepened one step
+#   copper      #B05D15       3.85:1        3.81:1    warmer/redder, balanced
+#   bronze      #96560D       4.68:1        3.13:1    burnt; interior wins
+#
+# THE TWO COLUMNS MOVE IN OPPOSITE DIRECTIONS BY CONSTRUCTION. An accent
+# sandwiched between cream (L .800) and ink (L .008) can reach at most
+# sqrt(14.64) = 3.83:1 on BOTH edges at once; 4.5:1 on both is unreachable, not
+# merely unchosen. `copper` sits on that optimum, `deep` favours the silhouette
+# (accent against ink), `bronze` the interior (cream against accent).
+#
+# The light-mode accent is chosen separately because there the accent sits ON
+# cream rather than beside it: the canonical #E0A33E is 1.79:1 on the cream
+# ground, which is why the light mark reads as a bare outline.
+PALETTES = {
+    # Canonical fastverk. Unchanged — this is what //gen:svgs still emits.
+    "midnight": {
+        "dark": {},
+        "light": {"bg": "#ECE7DA", "fg": "#15161A", "accent": "#E0A33E", "accent2": "#4A565A"},
+    },
+    # One step down the same hue (~36°). #B5781A is already a fastverk token —
+    # it is the accent //office's docx template has always used.
+    "deep": {
+        "dark": {"accent": "#B5781A", "accent2": "#845712"},
+        "light": {"bg": "#ECE7DA", "fg": "#15161A", "accent": "#B5781A", "accent2": "#4A565A"},
+    },
+    # Hue shifted to ~28° and set at the balance point: equal contrast on both
+    # edges of the sandwich. The largest identity move of the three.
+    "copper": {
+        "dark": {"accent": "#B05D15", "accent2": "#7F430F"},
+        "light": {"bg": "#ECE7DA", "fg": "#15161A", "accent": "#B05D15", "accent2": "#4A565A"},
+    },
+    # Deep enough that cream clears WCAG AA (4.5:1) against the accent, at the
+    # cost of the accent's pop against the ink ground.
+    "bronze": {
+        "dark": {"accent": "#96560D", "accent2": "#6B410B"},
+        "light": {"bg": "#ECE7DA", "fg": "#15161A", "accent": "#96560D", "accent2": "#4A565A"},
+    },
 }
+# NOTE the light rows above use the SAME accent as their dark row, which
+# "midnight" does not: canonical light lightens the accent to #E0A33E, and that
+# lands at 1.79:1 against the cream ground — the light mark's amber all but
+# disappears into its own field. Holding one accent per palette fixes that and
+# removes a value that had no reason to differ.
+
+# Color modes of the CANONICAL palette. Kept as its own name because raster.py
+# and the brandbook diagrams have always spelled it this way; it is now a view of
+# PALETTES rather than a second place the colours are written down.
+# ⚠ THE CANONICAL PALETTE IS THE DEFAULT, AND IT MUST STAY EQUAL TO
+# FASTVERK_PALETTE IN gen/palette.bzl. `brand_icons` is a macro over the
+# rasterizer and accepts no palette argument, so //icons:icon_set can only get
+# the brand's colours by inheriting this default. Change one without the other
+# and the icon and the lockup's mark silently disagree.
+CANONICAL_PALETTE = "deep"
+
+MODES = {mode: PALETTES[CANONICAL_PALETTE][mode] for mode in ("dark", "light")}
+
+def spec_for(variant, palette=None, mode="dark"):
+    palette = palette or CANONICAL_PALETTE
+    """The Spec for one (geometry variant, palette, mode) — the only place the
+    two axes are combined."""
+    return dataclasses.replace(VARIANTS[variant], **PALETTES[palette][mode])
 
 # Every layer file emit() can produce, per variant (for Bazel `outs` declaration).
 LAYERS = ["svg", "bg.svg", "mark.svg", "arrow.svg", "tint.svg"]
 
-def main(out_dir):
-    os.makedirs(out_dir, exist_ok=True)
-    for name, spec in VARIANTS.items():
-        Mark(spec).emit(os.path.join(out_dir, f"fastverk_{name}"))
-        print(f"emit fastverk_{name} -> {out_dir}")
+def parse_args(argv=None, prog=None):
+    """`<out-dir> [--prefix P] [--palette NAME] [--variant V]...` — shared with
+    raster.py so both halves of the pipeline take the same flags."""
+    ap = argparse.ArgumentParser(prog=prog)
+    ap.add_argument("out_dir", nargs="?", default=".")
+    ap.add_argument("--prefix", default="fastverk",
+                    help="output filename prefix (default: fastverk)")
+    ap.add_argument("--palette", default=CANONICAL_PALETTE, choices=sorted(PALETTES),
+                    help="named colour set (default: midnight, the canonical one)")
+    ap.add_argument("--variant", action="append", default=[], choices=sorted(VARIANTS),
+                    help="geometry variant; repeatable, default all")
+    args = ap.parse_args(argv)
+    args.variants = args.variant or list(VARIANTS)
+    return args
+
+def main(argv=None):
+    a = parse_args(argv)
+    os.makedirs(a.out_dir, exist_ok=True)
+    for name in a.variants:
+        base = f"{a.prefix}_{name}"
+        Mark(spec_for(name, a.palette)).emit(os.path.join(a.out_dir, base))
+        print(f"emit {base} [{a.palette}] -> {a.out_dir}")
 
 if __name__ == "__main__":
-    main(sys.argv[1] if len(sys.argv) > 1 else ".")
+    main()
