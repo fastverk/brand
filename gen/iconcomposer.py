@@ -14,11 +14,17 @@ CLI: iconcomposer.py <out-dir> [solid|auto]
 import os
 import sys
 
-from gen_mark import Mark, VARIANTS
+from gen_mark import Mark, VARIANTS, spec_for
 from marklib import iconcomposer as ic
 
 # Arrow gets the mono-amber gradient + an "overlay" mark blend (on-brand).
-ARROW_GRADIENT = ("#F2C46A", "#C9852B")
+#
+# ⚠ DERIVED, NOT WRITTEN DOWN. This was a hardcoded pair, and because `emit()`
+# OVERRIDES the layer gradient with it, the .icon bundles kept emitting the old
+# stops after the canonical palette moved — the one generator a palette switch
+# could not reach. Read it off the canonical Spec instead so it cannot drift.
+_CANON = spec_for("full")
+ARROW_GRADIENT = (_CANON.accent, _CANON.accent2)
 BLEND_MODES = {"mark": "overlay", "arrow": "normal", "tint": "normal"}
 
 def emit(out_dir, name, spec, fill="auto"):
@@ -33,8 +39,11 @@ def emit(out_dir, name, spec, fill="auto"):
 
 def main(out_dir, fill="auto"):
     os.makedirs(out_dir, exist_ok=True)
-    for name, spec in VARIANTS.items():
-        emit(out_dir, name, spec, fill)
+    # spec_for(), not VARIANTS[...] — VARIANTS carries the raw Spec defaults, so
+    # iterating it renders every variant in the DEFAULT palette regardless of
+    # which one is canonical.
+    for name in VARIANTS:
+        emit(out_dir, name, spec_for(name), fill)
 
 if __name__ == "__main__":
     main(sys.argv[1] if len(sys.argv) > 1 else ".",

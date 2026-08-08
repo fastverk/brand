@@ -75,39 +75,50 @@ measured WCAG ratio of each edge the mark actually has:
 bazel run //gen:gen_palettes -- /tmp/palettes
 ```
 
-The canonical tokens (the "midnight" palette) are:
+The canonical tokens (the "deep" palette, canonical since 2026-08-07 — it was
+"midnight", `#F2C46A` → `#C9852B`) are:
 
 | token | hex | role |
 |---|---|---|
 | ink | `#15161A` | ground |
 | ink-2 | `#1c1e24` | raised surface |
 | cream | `#ECE7DA` | foreground |
-| amber | `#F2C46A` | accent |
-| amber-deep | `#C9852B` | accent (gradient end / pressed) |
+| amber | `#B5781A` | accent |
+| amber-deep | `#845712` | accent (gradient end / pressed) |
 | muted | `#9A9488` | meta text |
+
+In the **light** skin the accent is `#96560D` rather than the canonical amber:
+there it is real text on the cream ground and has to clear 4.5:1, which `#B5781A`
+(3.00:1 on cream) does not. See `skins/fastverk.textpb`.
 
 ### The amber sits between cream and ink, and cannot clear both
 
 In the `full` variant the cream mark **crosses** the accent field (the F arm) and
-rings it on every side, so cream|amber is a real edge. Canonical amber measures
-**1.32:1** against cream — the arm dissolves into the field it crosses — while
-measuring 11.09:1 against the ink ground. Those two move in opposite directions
+rings it on every side, so cream|amber is a real edge. The old canonical amber
+(`#F2C46A`) measured **1.32:1** against cream — the arm dissolved into the field
+it crosses — while measuring 11.09:1 against the ink ground. Those two move in
+opposite directions
 by construction: with cream at L .800 and ink at L .008, an accent between them
 tops out at √14.64 = **3.83:1 on both edges at once**. 4.5:1 on both is
 unreachable, not merely unchosen.
 
 | palette | accent | cream \| accent | accent \| ink |
 |---|---|---|---|
-| `midnight` (canonical) | `#F2C46A` | 1.32:1 | 11.09:1 |
-| `deep` (verk) | `#B5781A` | 3.00:1 | 4.88:1 |
+| `midnight` (was canonical) | `#F2C46A` | 1.32:1 | 11.09:1 |
+| `deep` (canonical, and verk) | `#B5781A` | 3.00:1 | 4.88:1 |
 | `copper` | `#B05D15` | 3.85:1 | 3.81:1 |
 | `bronze` | `#96560D` | 4.68:1 | 3.13:1 |
 
-`//skins:verk_contrast` runs brando's WCAG gate over the verk skin. The same gate
-run against `fastverk.json` reports one **error** —
-`light:on_accent/accent (#ECE7DA on #C9852B) is 2.47:1` — which is the
-white-on-amber pairing, measured. It is left ungated rather than silently
-changed.
+`deep` clears the 3:1 WCAG 1.4.11 floor on the cream edge — the correct floor for
+a graphical boundary rather than text — and 4.5:1 against the ink ground, so the
+silhouette keeps its pop.
+
+`//skins:fastverk_contrast` and `//skins:verk_contrast` run brando's WCAG gate
+over both skins, and both **pass**. The gate used to be off for fastverk exactly
+because fastverk failed it — `light:on_accent/accent (#ECE7DA on #C9852B) is
+2.47:1, needs 4.5:1`, the weak white-on-amber the brand carried in production.
+The light skin's accent is now `#96560D` (4.68:1 on cream), so there is no longer
+a reason to leave the canonical brand ungated.
 
 ## Skin (`skins/`)
 

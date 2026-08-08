@@ -197,7 +197,9 @@ VARIANTS = {
 # cream rather than beside it: the canonical #E0A33E is 1.79:1 on the cream
 # ground, which is why the light mark reads as a bare outline.
 PALETTES = {
-    # Canonical fastverk. Unchanged — this is what //gen:svgs still emits.
+    # The former canonical fastverk palette (through 2026-08-06). Kept as a named
+    # ramp so the comparison above stays reproducible; //gen:svgs no longer emits
+    # it — it passes --palette FASTVERK_PALETTE, which is "deep".
     "midnight": {
         "dark": {},
         "light": {"bg": "#ECE7DA", "fg": "#15161A", "accent": "#E0A33E", "accent2": "#4A565A"},
