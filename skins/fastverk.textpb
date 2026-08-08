@@ -28,7 +28,18 @@ dark {
   muted: "#9A9488"         # warm grey meta text
   border: "#2A2C33"        # hairline (mdBook --sidebar-spacer)
   accent: "#B5781A"        # amber (links, selection, primary action)
-  accent_strong: "#845712" # amber-deep (gradient end / pressed)
+  # ⛔ #C9852B, NOT the mark's #845712 — and the difference is deliberate.
+  #
+  # The MARK's gradient end is #845712 because the mark must separate from a CREAM
+  # ground. This token is a UI colour on an INK ground, and it is used AS TEXT:
+  # .grad-text / .hero h1 .grad paint the gradient THROUGH glyphs, so the darkest
+  # stop is read, not just seen. #845712 measures 2.89:1 there — under even the
+  # 3:1 large-text floor. #C9852B is 5.92:1.
+  #
+  # ⚠ The two grounds want opposite things: dark-on-cream for the mark, light-on-ink
+  # for UI text. A single value cannot serve both, which is why this token and the
+  # mark's gradient legitimately differ. The gate below is what keeps that honest.
+  accent_strong: "#C9852B"
   on_accent: "#15161A"     # ink text on an amber fill
   danger: "#D6452F"
   success: "#5BB873"
